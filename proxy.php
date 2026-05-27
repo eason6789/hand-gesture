@@ -21,7 +21,7 @@ if (!$input || empty($input['messages'])) {
 $apiKey = 'REMOVED_API_KEY';
 
 $payload = json_encode([
-    'model' => 'abab6.5s-chat',
+    'model' => 'MiniMax-M2.7',
     'messages' => $input['messages'],
     'max_tokens' => isset($input['max_tokens']) ? $input['max_tokens'] : 1024,
     'temperature' => 0.9,
