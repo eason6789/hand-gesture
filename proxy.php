@@ -18,7 +18,7 @@ if (!$input || empty($input['messages'])) {
     exit;
 }
 
-$apiKey = 'REMOVED_API_KEY';
+$apiKey = getenv('MINIMAX_API_KEY') ?: '';
 
 $payload = json_encode([
     'model' => 'MiniMax-M2.7',
