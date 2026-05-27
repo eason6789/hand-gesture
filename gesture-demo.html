@@ -71,9 +71,13 @@
     pointer-events: none;
   }
 
-  /* 恢复卡片区域点击能力 */
+  /* 恢复卡片区域点击能力 (逐层穿透) */
+  #video { pointer-events: none; }
+  #available-area, #selected-area { pointer-events: auto; }
   #available-scroll, #selected-scroll { pointer-events: auto; }
   .avail-card, .sel-card { pointer-events: auto; }
+  /* 底部手势面板也可点击 */
+  #panel { pointer-events: auto; }
 
   #available-area {
     position: relative;
@@ -91,6 +95,24 @@
     color: var(--muted);
     padding: 14px 0 8px;
     z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  #sort-btn {
+    background: rgba(124,92,224,0.12);
+    border: 1px solid rgba(124,92,224,0.3);
+    color: var(--accent);
+    border-radius: 14px;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s;
+    pointer-events: auto;
+  }
+  #sort-btn:hover {
+    background: rgba(124,92,224,0.25);
+    border-color: var(--accent2);
   }
 
   .scroll-arrow {
@@ -688,7 +710,10 @@
 
   <div id="cards-layer">
     <div id="available-area">
-      <div id="available-label">— 待 选 —</div>
+      <div id="available-label">
+        — 待 选 —
+        <button id="sort-btn" title="排序/洗牌">🔀</button>
+      </div>
       <div id="scroll-left" class="scroll-arrow left">◀</div>
       <div id="available-scroll"></div>
       <div id="scroll-right" class="scroll-arrow right">▶</div>
@@ -842,6 +867,41 @@ let openPalmFrames = 0;
 // 键盘输入的hover索引
 let kbHoverIndex = -1;
 
+// 排序模式: 0=默认, 1=大阿尔卡纳优先, 2=随机洗牌
+let sortMode = 0;
+let cardOrder = [...Array(TAROT_CARDS.length).keys()]; // displayIndex → originalIndex
+
+function cycleSortMode() {
+  sortMode = (sortMode + 1) % 3;
+  const labels = ['默认', '大牌优先', '随机洗牌'];
+  const icons = ['📋', '✨', '🎲'];
+  document.getElementById('sort-btn').textContent = icons[sortMode];
+
+  if (sortMode === 0) {
+    cardOrder = [...Array(TAROT_CARDS.length).keys()];
+  } else if (sortMode === 1) {
+    // 大阿尔卡纳 (0-21) 优先，然后小牌 (22-35)
+    const major = [...Array(22).keys()];
+    const minor = [...Array(TAROT_CARDS.length - 22).keys()].map(i => i + 22);
+    cardOrder = [...major, ...minor];
+  } else if (sortMode === 2) {
+    // Fisher-Yates 随机洗牌
+    cardOrder = [...Array(TAROT_CARDS.length).keys()];
+    for (let i = cardOrder.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [cardOrder[i], cardOrder[j]] = [cardOrder[j], cardOrder[i]];
+    }
+  }
+
+  // 重新渲染，保留选中状态
+  renderAvailableCards();
+  // 重置悬停
+  hoveredIndex = -1;
+  lastPointedCard = -1;
+  hoverHoldFrames = 0;
+  showToast(labels[sortMode]);
+}
+
 // ----- 初始化 -----
 async function init() {
   try {
@@ -965,6 +1025,9 @@ function setupEventListeners() {
     }
   });
 
+  // 排序按钮
+  document.getElementById('sort-btn').addEventListener('click', cycleSortMode);
+
   // 底部手势卡片点击模拟
   document.getElementById('gest-ok').addEventListener('click', () => {
     const idx = lastHoveredValid ? lastHoveredIndex : (hoveredIndex >= 0 ? hoveredIndex : 0);
@@ -1081,7 +1144,8 @@ function toggleHelp() {
 function renderAvailableCards() {
   const scroll = document.getElementById('available-scroll');
   scroll.innerHTML = '';
-  TAROT_CARDS.forEach((card, idx) => {
+  cardOrder.forEach((idx) => {
+    const card = TAROT_CARDS[idx];
     const c = document.createElement('div');
     c.className = 'avail-card';
     c.id = 'avail-card-' + idx;
@@ -1407,6 +1471,7 @@ function recognizeGesture(landmarks) {
     (landmarks[0].x - landmarks[9].x) ** 2 +
     (landmarks[0].y - landmarks[9].y) ** 2
   );
+  if (palmSize < 0.001) return { gesture: 'none', pinchDist: 1, avgOpen: 1, fingerDist: [1,1,1,1,1] };
 
   const fingerDist = FINGER_TIPS.map((tip, i) => {
     const dx = landmarks[tip].x - landmarks[FINGER_PIPS[i]].x;
@@ -1421,37 +1486,49 @@ function recognizeGesture(landmarks) {
 
   const avgOpen = fingerDist.reduce((a, b) => a + b, 0) / 5;
 
-  // 1) 捏合 = 选中（阈值放宽到0.28，更易触发）
-  if (pinchDist < 0.35) {
+  // 逐指状态: fingerDist < 0.25 → 弯曲, > 0.35 → 伸展
+  const thumbBent  = fingerDist[0] < 0.25;
+  const indexBent  = fingerDist[1] < 0.25;
+  const middleBent = fingerDist[2] < 0.28;
+  const ringBent   = fingerDist[3] < 0.28;
+  const pinkyBent  = fingerDist[4] < 0.28;
+
+  const middleExt = fingerDist[2] > 0.32;
+  const ringExt   = fingerDist[3] > 0.32;
+  const pinkyExt  = fingerDist[4] > 0.32;
+
+  const bentCount = [thumbBent,indexBent,middleBent,ringBent,pinkyBent].filter(Boolean).length;
+  const extCount = [middleExt,ringExt,pinkyExt].filter(Boolean).length;
+
+  // 1) 🤏 捏合: 拇指+食指向内弯曲靠拢，其余3指伸展（排除握拳误判）
+  if (pinchDist < 0.22 && thumbBent && indexBent && extCount >= 2) {
+    fistHoldFrames = 0;
     openPalmFrames = 0;
     return { gesture: 'ok', pinchDist, avgOpen, fingerDist };
   }
 
-  // 2) 握拳 = 清空全部
-  // 所有手指都弯曲 (每个fingerDist < 0.3) 且平均张开度低
-  const allFingersClosed = fingerDist.every(d => d < 0.3);
-  if (avgOpen < 0.24 && allFingersClosed) {
+  // 2) ✊ 握拳: 5指全部弯曲
+  if (bentCount >= 4 && avgOpen < 0.25) {
     fistHoldFrames++;
     openPalmFrames = 0;
-    if (fistHoldFrames >= 90) {
+    if (fistHoldFrames >= 45) {
       fistHoldFrames = 0;
       return { gesture: 'fist', pinchDist, avgOpen, fingerDist };
     }
     return { gesture: 'fist_holding', pinchDist, avgOpen, fingerDist };
-  } else {
-    fistHoldFrames = 0;
   }
+  // 逐渐衰减握拳计数
+  if (fistHoldFrames > 0 && bentCount < 3) fistHoldFrames = Math.max(0, fistHoldFrames - 2);
 
-  // 3) 张开手掌 = 提交解读
-  // 所有手指伸展 (avgOpen > 0.5) 持续120帧≈2秒
-  if (avgOpen > 0.5) {
+  // 3) 🖐 张开手掌: 5指全部伸展
+  if (avgOpen > 0.38 && bentCount <= 1) {
     openPalmFrames++;
-    if (openPalmFrames >= 120) {
+    if (openPalmFrames >= 60) {
       openPalmFrames = 0;
       return { gesture: 'submit', pinchDist, avgOpen, fingerDist };
     }
   } else {
-    openPalmFrames = 0;
+    if (openPalmFrames > 0 && avgOpen < 0.34) openPalmFrames = Math.max(0, openPalmFrames - 2);
   }
 
   return { gesture: 'none', pinchDist, avgOpen, fingerDist };
@@ -1610,6 +1687,7 @@ function showInterpretation() {
   // 渲染选中牌
   cardsContainer.innerHTML = '';
   const indicesArr = [...selectedIndices];
+  const cards = indicesArr.map(i => TAROT_CARDS[i]);
   indicesArr.forEach(idx => {
     const card = TAROT_CARDS[idx];
     const div = document.createElement('div');
@@ -1622,11 +1700,54 @@ function showInterpretation() {
     cardsContainer.appendChild(div);
   });
 
-  // 生成解读
-  readingEl.textContent = generateReading(selectedIndices);
-
   overlay.classList.add('show');
-  showToast('✨ 解读已生成');
+  readingEl.textContent = '🔮 AI解读中...';
+  showToast('✨ 正在召唤AI解读...');
+
+  // 构建 prompt
+  const cardDescs = cards.map((c, i) => {
+    const pos = ['过去','现在','未来','阻碍','结果','建议','环境','内心','期望','基石'][i] || `位置${i+1}`;
+    return `${pos}：${c.name}（${c.symbol}）— ${c.meaning}`;
+  }).join('\n');
+
+  const prompt = `你是一位神秘的塔罗占卜师。请根据以下${cards.length}张塔罗牌进行深度解读：
+
+${cardDescs}
+
+请用中文给出：
+1. 每张牌在对应位置的含义（2-3句话）
+2. 所有牌的综合解读（占卜结果）
+
+风格要求：神秘、富有哲理、充满画面感，像一位真正的占卜师在解读命运。每张牌的解读控制在2-3句话。总共300-500字。`;
+
+  // 调用 MiniMax AI (通过 PHP 代理)
+  fetch('/hand-gesture/proxy.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      messages: [
+        { role: 'system', content: '你是一位神秘而睿智的塔罗占卜师，擅长解读命运。回答简洁有力，充满哲理。' },
+        { role: 'user', content: prompt }
+      ],
+      max_tokens: 1000
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.choices && data.choices[0] && data.choices[0].message) {
+      readingEl.textContent = data.choices[0].message.content;
+      showToast('✨ AI解读完成');
+    } else if (data.error) {
+      throw new Error(data.error);
+    } else {
+      throw new Error('Invalid response');
+    }
+  })
+  .catch(err => {
+    console.warn('AI API failed, using local reading:', err);
+    readingEl.textContent = generateReading(selectedIndices);
+    showToast('⚠ AI暂不可用，显示基础解读');
+  });
 }
 
 function closeInterpretation() {
