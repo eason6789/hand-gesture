@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Divition — 手势塔罗占卜</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0f;
+    --card-bg: rgba(18, 18, 26, 0.92);
+    --accent: #7c5ce0;
+    --accent2: #c44eff;
+    --accent3: #00ffc8;
+    --text: #e8e4f0;
+    --muted: #6b6480;
+    --glow: rgba(124, 92, 224, 0.4);
+    --gold: #ffd700;
+    --red: #ff4444;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Courier New', monospace;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* ===== 全部堆叠层 ===== */
+  #layers {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  #video {
+    display: block;
+    position: absolute;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: fill;
+    transform: scaleX(1);
+  }
+
+  #skeleton-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+  }
+
+  #dim-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10,10,15,0.35);
+    pointer-events: none;
+  }
+
+  /* ========== 第三层：卡片区 ========== */
+  #cards-layer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+  }
+
+  #available-area {
+    position: relative;
+    height: 52%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  #available-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 14px 0 8px;
+    z-index: 10;
+  }
+
+  .scroll-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 28px;
+    color: rgba(124,92,224,0.3);
+    transition: all 0.3s;
+    z-index: 20;
+    pointer-events: none;
+  }
+  .scroll-arrow.left { left: 14px; }
+  .scroll-arrow.right { right: 14px; }
+  .scroll-arrow.active {
+    color: var(--accent2);
+    text-shadow: 0 0 20px var(--accent2);
+    transform: translateY(-50%) scale(1.3);
+  }
+
+  #available-scroll {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 60px 10px 60px;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-behavior: smooth;
+    flex: 1;
+    scrollbar-width: none;
+    position: relative;
+  }
+  #available-scroll::-webkit-scrollbar { display: none; }
+
+  .avail-card {
+    flex-shrink: 0;
+    width: 88px;
+    height: 130px;
+    border-radius: 8px;
+    border: 1px solid rgba(124,92,224,0.25);
+    background: linear-gradient(145deg, #1a1a2e, #16162a);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    cursor: pointer;
+    scroll-snap-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .avail-card .card-symbol { font-size: 22px; color: var(--accent); opacity: 0.7; }
+  .avail-card .card-name { font-size: 9px; letter-spacing: 1.5px; color: var(--accent); text-transform: uppercase; }
+  .avail-card .card-meaning { font-size: 7px; color: var(--muted); text-align: center; padding: 0 6px; line-height: 1.3; }
+
+  /* 悬停进度条 */
+  .avail-card .hover-progress-bar {
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent3));
+    width: 0%;
+    transition: width 0.15s linear;
+    z-index: 5;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .avail-card.hovered {
+    border-color: var(--accent2);
+    box-shadow: 0 0 24px rgba(196,78,255,0.5), 0 8px 24px rgba(0,0,0,0.5);
+    transform: translateY(-10px) scale(1.08);
+  }
+
+  .avail-card.selected-card {
+    border-color: rgba(0,255,200,0.5);
+    background: rgba(0,255,200,0.06);
+    box-shadow: 0 0 16px rgba(0,255,200,0.3);
+  }
+  .avail-card.selected-card::after {
+    content: '✓';
+    position: absolute;
+    top: 4px; right: 6px;
+    font-size: 10px;
+    color: var(--accent3);
+  }
+
+  #divider {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.3;
+    flex-shrink: 0;
+  }
+
+  #selected-area {
+    position: relative;
+    height: 48%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #selected-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent3);
+    padding: 12px 0 8px;
+    z-index: 10;
+  }
+
+  #selected-scroll {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 40px;
+    overflow-x: auto;
+    overflow-y: visible;
+    flex: 1;
+    scrollbar-width: none;
+  }
+  #selected-scroll::-webkit-scrollbar { display: none; }
+
+  .sel-card {
+    flex-shrink: 0;
+    width: 100px;
+    height: 145px;
+    border-radius: 10px;
+    border: 1.5px solid var(--accent3);
+    background: linear-gradient(145deg, #1a2a2e, #162028);
+    box-shadow: 0 0 22px rgba(0,255,200,0.3), 0 6px 20px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: all 0.35s ease;
+    animation: selFloat 3s ease-in-out infinite;
+    position: relative;
+    cursor: pointer;
+  }
+  .sel-card .card-symbol { font-size: 26px; color: var(--accent3); filter: drop-shadow(0 0 8px rgba(0,255,200,0.5)); }
+  .sel-card .card-name { font-size: 10px; letter-spacing: 1.5px; color: var(--accent3); text-transform: uppercase; }
+  .sel-card .card-meaning { font-size: 7.5px; color: var(--muted); text-align: center; padding: 0 8px; line-height: 1.3; }
+
+  @keyframes selFloat {
+    0%,100% { transform: translateY(0) rotate(-1.5deg); }
+    50% { transform: translateY(-6px) rotate(1deg); }
+  }
+
+  #sel-empty {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    opacity: 0.4;
+    white-space: nowrap;
+  }
+
+  /* ========== 顶部状态栏 ========== */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 48px;
+    background: rgba(10,10,15,0.85);
+    border-bottom: 1px solid rgba(124,92,224,0.2);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 200;
+  }
+  header h1 { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); }
+  #gesture-label { font-size: 10px; color: var(--muted); }
+  #gesture-label span { color: var(--accent2); }
+
+  /* ========== 底部手势面板 ========== */
+  #panel {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(18,18,26,0.9);
+    border: 1px solid rgba(124,92,224,0.3);
+    border-radius: 12px;
+    padding: 10px 20px;
+    backdrop-filter: blur(16px);
+    display: flex;
+    gap: 16px;
+    z-index: 200;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.5);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .gesture-card {
+    text-align: center;
+    padding: 7px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.06);
+    min-width: 68px;
+    transition: all 0.3s;
+  }
+  .gesture-card .icon { font-size: 20px; margin-bottom: 2px; display: block; }
+  .gesture-card .name { font-size: 9px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
+  .gesture-card .desc { font-size: 8px; color: var(--muted); margin-top: 2px; opacity: 0.6; }
+  .gesture-card.active {
+    border-color: var(--accent);
+    background: rgba(124,92,224,0.15);
+    box-shadow: 0 0 12px var(--glow);
+  }
+  .gesture-card.active .name { color: var(--accent2); }
+
+  /* ========== Submit 按钮 ========== */
+  #submit-btn {
+    position: fixed;
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 30px;
+    color: #fff;
+    padding: 10px 28px;
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    cursor: pointer;
+    z-index: 210;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s;
+    box-shadow: 0 0 24px rgba(124,92,224,0.5);
+    text-transform: uppercase;
+  }
+  #submit-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  #submit-btn:hover {
+    box-shadow: 0 0 36px rgba(196,78,255,0.7);
+    transform: translateX(-50%) scale(1.05);
+  }
+  #submit-btn:active {
+    transform: translateX(-50%) scale(0.95);
+  }
+
+  /* ========== 结果弹窗 ========== */
+  #result-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5,5,10,0.92);
+    z-index: 500;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    overflow-y: auto;
+    padding: 40px 20px;
+  }
+  #result-overlay.show { display: flex; }
+
+  #result-close {
+    position: fixed;
+    top: 16px; right: 20px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--text);
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 510;
+    transition: all 0.3s;
+  }
+  #result-close:hover {
+    background: rgba(255,68,68,0.3);
+    border-color: var(--red);
+  }
+
+  #result-title {
+    font-size: 16px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  #result-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+
+  .result-card {
+    width: 120px;
+    padding: 16px 12px;
+    border-radius: 12px;
+    border: 1.5px solid rgba(0,255,200,0.3);
+    background: linear-gradient(160deg, #1a2a2e, #162028);
+    box-shadow: 0 0 20px rgba(0,255,200,0.15);
+    text-align: center;
+  }
+  .result-card .rc-symbol { font-size: 28px; color: var(--accent3); margin-bottom: 8px; }
+  .result-card .rc-name { font-size: 11px; letter-spacing: 2px; color: var(--accent3); margin-bottom: 6px; text-transform: uppercase; }
+  .result-card .rc-meaning { font-size: 9px; color: var(--muted); line-height: 1.5; }
+
+  #result-reading {
+    max-width: 520px;
+    background: rgba(124,92,224,0.08);
+    border: 1px solid rgba(124,92,224,0.2);
+    border-radius: 12px;
+    padding: 20px 24px;
+    text-align: center;
+  }
+  #result-reading .rr-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  #result-reading .rr-text {
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+  #result-reading .rr-actions {
+    margin-top: 16px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+  #result-reading .rr-btn {
+    background: rgba(124,92,224,0.2);
+    border: 1px solid var(--accent);
+    color: var(--text);
+    padding: 8px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+  }
+  #result-reading .rr-btn:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* ========== 帮助面板 ========== */
+  #help-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5,5,10,0.88);
+    z-index: 400;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  #help-overlay.show { display: flex; }
+
+  #help-panel {
+    background: rgba(18,18,26,0.95);
+    border: 1px solid rgba(124,92,224,0.3);
+    border-radius: 14px;
+    padding: 28px 32px;
+    max-width: 420px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.6);
+  }
+  #help-panel h2 {
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--accent2);
+    margin-bottom: 18px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+  #help-panel .kb-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 6px 0;
+    font-size: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  #help-panel .kb-key {
+    color: var(--accent3);
+    background: rgba(0,255,200,0.08);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+  }
+  #help-panel .kb-desc {
+    color: var(--muted);
+  }
+  #help-panel .kb-close {
+    display: block;
+    margin: 16px auto 0;
+    background: none;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--muted);
+    padding: 6px 16px;
+    border-radius: 16px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+  #help-panel .kb-close:hover { color: #fff; border-color: #fff; }
+
+  /* ========== Toast ========== */
+  #action-toast {
+    position: fixed;
+    top: 62px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-16px);
+    background: rgba(18,18,26,0.95);
+    border: 1px solid var(--accent);
+    color: var(--accent2);
+    padding: 8px 20px;
+    border-radius: 40px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    z-index: 300;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+    box-shadow: 0 0 20px var(--glow);
+    white-space: nowrap;
+  }
+  #action-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ========== 加载 ========== */
+  #loading {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: opacity 0.5s;
+  }
+  #loading.hidden { opacity: 0; pointer-events: none; }
+  .loader {
+    width: 40px; height: 40px;
+    border: 2px solid rgba(124,92,224,0.2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loading-text { font-size: 11px; color: var(--muted); letter-spacing: 2px; }
+
+  /* ========== 错误 ========== */
+  #cam-error {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    text-align: center;
+    padding: 40px;
+  }
+  #cam-error .emoji { font-size: 40px; margin-bottom: 10px; }
+  #cam-error p { color: var(--muted); font-size: 11px; margin-top: 10px; max-width: 380px; line-height: 1.6; }
+  #cam-error button {
+    margin-top: 16px; padding: 8px 20px;
+    background: var(--accent); border: none;
+    border-radius: 8px; color: white;
+    cursor: pointer; letter-spacing: 1px;
+    font-family: inherit;
+  }
+  #cam-error button:hover { background: var(--accent2); }
+
+  /* ========== Debug Panel ========== */
+  #debug-panel {
+    position: fixed;
+    bottom: 80px;
+    left: 14px;
+    background: rgba(0,0,0,0.85);
+    border: 1px solid rgba(124,92,224,0.5);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 10px;
+    color: #a0a0c0;
+    z-index: 300;
+    min-width: 200px;
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+  }
+  #debug-panel .row { display: flex; gap: 8px; }
+  #debug-panel .label { color: var(--muted); min-width: 80px; }
+  #debug-panel .value { color: var(--accent2); }
+
+  /* ========== Mobile responsiveness ========== */
+  @media (max-width: 768px) {
+    .avail-card { width: 72px; height: 108px; }
+    .avail-card .card-symbol { font-size: 18px; }
+    .avail-card .card-name { font-size: 7px; }
+    .avail-card .card-meaning { font-size: 6px; }
+    .sel-card { width: 80px; height: 120px; }
+    .sel-card .card-symbol { font-size: 22px; }
+    .sel-card .card-name { font-size: 8px; }
+    #panel { gap: 8px; padding: 8px 12px; }
+    .gesture-card { min-width: 52px; padding: 5px 8px; }
+    .gesture-card .icon { font-size: 16px; }
+    .gesture-card .name { font-size: 7px; }
+    .gesture-card .desc { font-size: 6px; }
+    #available-scroll { padding: 10px 40px; gap: 10px; }
+    #submit-btn { bottom: 100px; }
+    #debug-panel { bottom: 60px; left: 4px; padding: 6px 8px; font-size: 8px; min-width: 160px; }
+    .result-card { width: 90px; padding: 12px 8px; }
+  }
+
+  @media (max-width: 480px) {
+    .avail-card { width: 60px; height: 92px; }
+    .avail-card .card-symbol { font-size: 15px; }
+    .avail-card .card-name { font-size: 6px; }
+    .avail-card .card-meaning { font-size: 5px; }
+    .sel-card { width: 66px; height: 98px; }
+    .sel-card .card-symbol { font-size: 18px; }
+    #panel { gap: 4px; padding: 6px 8px; }
+    .gesture-card { min-width: 44px; padding: 4px 5px; }
+    .gesture-card .icon { font-size: 14px; }
+    .gesture-card .name { font-size: 6px; }
+    .gesture-card .desc { display: none; }
+    #available-scroll { padding: 8px 30px; gap: 8px; }
+    #result-cards { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="loader"></div>
+  <p id="loading-text">加载中...</p>
+</div>
+
+<div id="cam-error">
+  <div class="emoji">📷</div>
+  <p id="cam-error-msg">摄像头初始化失败</p>
+  <button onclick="location.reload()">重试</button>
+</div>
+
+<div id="action-toast"></div>
+
+<!-- ===== 结果弹窗 ===== -->
+<div id="result-overlay">
+  <button id="result-close" title="关闭 (Esc)">✕</button>
+  <div id="result-title">✨ 占卜结果 ✨</div>
+  <div id="result-cards"></div>
+  <div id="result-reading">
+    <div class="rr-label">综合解读</div>
+    <div class="rr-text"></div>
+    <div class="rr-actions">
+      <button class="rr-btn" id="rr-retry">重新抽牌</button>
+      <button class="rr-btn" id="rr-close">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 帮助面板 ===== -->
+<div id="help-overlay">
+  <div id="help-panel">
+    <h2>⌨ 键盘快捷键</h2>
+    <div class="kb-row"><span class="kb-key">← →</span><span class="kb-desc">翻动待选牌</span></div>
+    <div class="kb-row"><span class="kb-key">Enter / Space</span><span class="kb-desc">选中当前高亮的牌</span></div>
+    <div class="kb-row"><span class="kb-key">Delete / Back</span><span class="kb-desc">移除最后一张已选牌</span></div>
+    <div class="kb-row"><span class="kb-key">Escape</span><span class="kb-desc">清空已选 / 关闭弹窗</span></div>
+    <div class="kb-row"><span class="kb-key">S</span><span class="kb-desc">提交并查看解读</span></div>
+    <div class="kb-row"><span class="kb-key">?</span><span class="kb-desc">显示/隐藏此帮助</span></div>
+    <div class="kb-row"><span class="kb-key">点击牌</span><span class="kb-desc">鼠标点击选中/取消</span></div>
+    <button class="kb-close" id="kb-close">关闭</button>
+  </div>
+</div>
+
+<!-- 全部堆叠层 -->
+<div id="layers">
+  <video id="video" playsinline autoplay muted></video>
+  <canvas id="skeleton-canvas"></canvas>
+  <div id="dim-overlay"></div>
+
+  <div id="cards-layer">
+    <div id="available-area">
+      <div id="available-label">— 待 选 —</div>
+      <div id="scroll-left" class="scroll-arrow left">◀</div>
+      <div id="available-scroll"></div>
+      <div id="scroll-right" class="scroll-arrow right">▶</div>
+    </div>
+    <div id="divider"></div>
+    <div id="selected-area">
+      <div id="selected-label">— 已 选 —</div>
+      <div id="selected-scroll">
+        <div id="sel-empty">暂无选中的牌</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header>
+  <h1>Divition</h1>
+  <div id="gesture-label">手势：<span id="current-gesture">—</span> | <span id="mode-label">等待中</span></div>
+</header>
+
+<button id="submit-btn">✦ 提交解读 ✦</button>
+
+<div id="panel">
+  <div class="gesture-card" id="gest-left">
+    <span class="icon">👋</span>
+    <div class="name">👈 手向左挥</div>
+    <div class="desc">待选区向左翻页</div>
+  </div>
+  <div class="gesture-card" id="gest-right">
+    <span class="icon">👋</span>
+    <div class="name">👉 手向右挥</div>
+    <div class="desc">待选区向右翻页</div>
+  </div>
+  <div class="gesture-card" id="gest-ok">
+    <span class="icon">🤏</span>
+    <div class="name">🤏 捏合 / 悬停</div>
+    <div class="desc">捏合选中 或 停留3秒</div>
+  </div>
+  <div class="gesture-card" id="gest-fist">
+    <span class="icon">✊</span>
+    <div class="name">✊ 握拳</div>
+    <div class="desc">握拳1.5秒清空已选</div>
+  </div>
+  <div class="gesture-card" id="gest-submit">
+    <span class="icon">🖐</span>
+    <div class="name">🖐 张开手掌</div>
+    <div class="desc">张开2秒提交解读</div>
+  </div>
+</div>
+
+<!-- Debug Panel -->
+<div id="debug-panel">
+  <div class="row"><span class="label">pinchDist</span><span class="value" id="dbg-pinch">—</span></div>
+  <div class="row"><span class="label">avgOpen</span><span class="value" id="dbg-avgopen">—</span></div>
+  <div class="row"><span class="label">fingerDist[0]</span><span class="value" id="dbg-finger0">—</span></div>
+  <div class="row"><span class="label">hoveredIndex</span><span class="value" id="dbg-hovered">—</span></div>
+  <div class="row"><span class="label">lastHovered</span><span class="value" id="dbg-lasthover">—</span></div>
+  <div class="row"><span class="label">gesture</span><span class="value" id="dbg-gesture">—</span></div>
+  <div class="row"><span class="label">scrollDir</span><span class="value" id="dbg-scrolldir">—</span></div>
+  <div class="row"><span class="label">hoverHold</span><span class="value" id="dbg-hoverhold">—</span></div>
+  <div class="row"><span class="label">fistHold</span><span class="value" id="dbg-fistframes">—</span></div>
+  <div class="row"><span class="label">openPalm</span><span class="value" id="dbg-openpalm">—</span></div>
+  <div class="row"><span class="label">indexTip</span><span class="value" id="dbg-indextip">—</span></div>
+</div>
+
+<script type="module">
+import { HandLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.17/+esm';
+
+// ----- 骨节连接 -----
+const HAND_CONNECTIONS = [
+  [1,2],[2,3],[3,4],
+  [5,6],[6,7],[7,8],
+  [9,10],[10,11],[11,12],
+  [13,14],[14,15],[15,16],
+  [17,18],[18,19],[19,20],
+  [0,5],[0,9],[0,13],[0,17],[5,9],[9,13],[13,17]
+];
+const FINGER_TIPS = [4, 8, 12, 16, 20];
+const FINGER_PIPS = [3, 6, 10, 14, 18];
+
+// ----- 塔罗牌数据（36张）-----
+const TAROT_CARDS = [
+  { name:'愚者',    symbol:'0',  meaning:'新的开始·无限可能' },
+  { name:'魔术师', symbol:'I',  meaning:'意志·工具·创造力' },
+  { name:'女祭司', symbol:'II', meaning:'直觉·神秘·内在智慧' },
+  { name:'女皇',   symbol:'III',meaning:'丰饶·母性·自然' },
+  { name:'皇帝',   symbol:'IV', meaning:'权威·秩序·父亲形象' },
+  { name:'教皇',   symbol:'V',  meaning:'信仰·传统·精神导师' },
+  { name:'恋人',   symbol:'VI', meaning:'选择·关系·爱与美' },
+  { name:'战车',   symbol:'VII',meaning:'意志力·胜利·控制' },
+  { name:'力量',   symbol:'VIII',meaning:'勇气·耐心·内在力量' },
+  { name:'隐士',   symbol:'IX', meaning:'内省·独处·寻求真理' },
+  { name:'命运轮', symbol:'X',  meaning:'命运·转折·机遇' },
+  { name:'正义',   symbol:'XI', meaning:'公正·诚实·因果' },
+  { name:'吊人',   symbol:'XII',meaning:'牺牲·换位·等待' },
+  { name:'死神',   symbol:'XIII',meaning:'转变·结束·重生' },
+  { name:'节制',   symbol:'XIV',meaning:'平衡·调节·中庸' },
+  { name:'恶魔',   symbol:'XV', meaning:'束缚·欲望·物质' },
+  { name:'塔',     symbol:'XVI',meaning:'破坏·觉醒·意外' },
+  { name:'星',     symbol:'XVII',meaning:'希望·灵感·新方向' },
+  { name:'月',     symbol:'XVIII',meaning:'错觉·不安·潜意识' },
+  { name:'太阳',   symbol:'XIX', meaning:'快乐·活力·成功' },
+  { name:'审判',   symbol:'XX', meaning:'复苏·重启·宽恕' },
+  { name:'世界',   symbol:'XXI', meaning:'完成·循环·成就感' },
+  { name:'权杖Ace',symbol:'A♠', meaning:'创造力·新计划·热情' },
+  { name:'权杖II', symbol:'2♠', meaning:'冒险·决定·旅行' },
+  { name:'权杖III',symbol:'3♠', meaning:'成长·扩张·自信' },
+  { name:'圣杯Ace',symbol:'A♥', meaning:'情感·新关系·同情' },
+  { name:'圣杯II', symbol:'2♥', meaning:'伙伴·选择·吸引' },
+  { name:'圣杯III',symbol:'3♥', meaning:'合作·欢庆·创意' },
+  { name:'宝剑Ace',symbol:'A♣', meaning:'新想法·冲突·清晰' },
+  { name:'宝剑II', symbol:'2♣', meaning:'困境·僵局·决策' },
+  { name:'宝剑III',symbol:'3♣', meaning:'悲伤·失落·分离' },
+  { name:'星币Ace',symbol:'A◆', meaning:'新机会·物质·健康' },
+  { name:'星币II', symbol:'2◆', meaning:'选择·多向·平衡' },
+  { name:'星币III',symbol:'3◆', meaning:'技能·努力·团队' },
+  { name:'星币IV', symbol:'4◆', meaning:'安全·保守·坚持' },
+  { name:'星币V',  symbol:'5◆', meaning:'贫穷·孤独·危机' },
+];
+
+// ----- 状态 -----
+let landmarker;
+let video, skeletonCanvas, skCtx;
+let selectedIndices = new Set();
+let hoveredIndex = -1;
+let lastHoveredIndex = 0;
+let lastHoveredValid = false;
+let lastGesture = 'none';
+let gestureCooldown = 0;
+let scrollCooldown = 0;
+
+// 手势方向追踪
+let lastHandX = 0;
+let scrollDx = 0;
+let scrollDir = 0;
+let scrollStableFrames = 0;
+
+// 握拳持续帧数
+let fistHoldFrames = 0;
+
+// 悬停持续帧数 (3秒≈180帧)
+let hoverHoldFrames = 0;
+let lastPointedCard = -1;
+
+// 张开手掌持续帧数 (2秒≈120帧)
+let openPalmFrames = 0;
+
+// 键盘输入的hover索引
+let kbHoverIndex = -1;
+
+// ----- 初始化 -----
+async function init() {
+  try {
+    console.log('[init] starting...');
+    setLoadingText('加载手势模型...');
+    const vision = await FilesetResolver.forVisionTasks(
+      'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.17/wasm'
+    );
+    console.log('[init] FilesetResolver done');
+    landmarker = await HandLandmarker.createFromOptions(vision, {
+      numHands: 2,
+      runningMode: 'VIDEO',
+      baseOptions: {
+        modelAssetPath: 'hand_landmarker.task',
+        minHandDetectionConfidence: 0.4,
+        minHandPresenceConfidence: 0.4,
+        minTrackingConfidence: 0.4,
+      }
+    });
+    console.log('[init] HandLandmarker created:', !!landmarker);
+
+    setLoadingText('启动摄像头...');
+    video = document.getElementById('video');
+    skeletonCanvas = document.getElementById('skeleton-canvas');
+    skCtx = skeletonCanvas.getContext('2d');
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width:{ ideal:1280 }, height:{ ideal:720 } }
+    });
+    console.log('[init] camera stream got');
+    video.srcObject = stream;
+    await video.play();
+    console.log('[init] video playing, readyState:', video.readyState);
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    renderAvailableCards();
+    setupEventListeners();
+    hideLoading();
+    requestAnimationFrame(detectLoop);
+
+  } catch (e) {
+    console.error(e);
+    hideLoading();
+    let msg = '摄像头初始化失败';
+    if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+      msg = '摄像头权限被拒绝。请在浏览器地址栏左侧允许摄像头访问后重试。';
+    } else if (e.name === 'NotFoundError' || e.name === 'DevicesNotFoundError') {
+      msg = '未找到摄像头。请确认设备已连接。';
+    } else if (e.name === 'NotReadableError' || e.name === 'TrackStartError') {
+      msg = '摄像头被其他应用占用。请关闭其他使用摄像头的程序后重试。';
+    } else {
+      msg = e.message || String(e);
+    }
+    document.getElementById('cam-error-msg').textContent = msg;
+    document.getElementById('cam-error').style.display = 'flex';
+  }
+}
+
+function setLoadingText(t) {
+  const el = document.getElementById('loading-text');
+  if (el) el.textContent = t;
+}
+function hideLoading() {
+  const el = document.getElementById('loading');
+  if (el) el.classList.add('hidden');
+}
+function resizeCanvas() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  video.width = w;
+  video.height = h;
+  video.style.width = w + 'px';
+  video.style.height = h + 'px';
+  skeletonCanvas.width = w;
+  skeletonCanvas.height = h;
+}
+
+// ============================================================
+// 事件监听 (PC / 键盘 / 触摸)
+// ============================================================
+
+function setupEventListeners() {
+  // 提交按钮
+  document.getElementById('submit-btn').addEventListener('click', () => {
+    if (selectedIndices.size > 0) showInterpretation();
+  });
+
+  // 结果弹窗关闭
+  document.getElementById('result-close').addEventListener('click', closeInterpretation);
+  document.getElementById('rr-close').addEventListener('click', closeInterpretation);
+  document.getElementById('rr-retry').addEventListener('click', resetAll);
+
+  // 帮助面板
+  document.getElementById('kb-close').addEventListener('click', toggleHelp);
+
+  // 键盘
+  window.addEventListener('keydown', handleKeyboard);
+
+  // 结果弹窗点击背景关闭
+  document.getElementById('result-overlay').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeInterpretation();
+  });
+
+  // 帮助面板点击背景关闭
+  document.getElementById('help-overlay').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) toggleHelp();
+  });
+
+  // 触摸滑动 (待选区)
+  const scrollEl = document.getElementById('available-scroll');
+  let touchStartX = 0;
+  scrollEl.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  scrollEl.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) {
+      doScroll(dx > 0 ? -1 : 1);
+    }
+  });
+}
+
+// ============================================================
+// 键盘控制
+// ============================================================
+
+function handleKeyboard(e) {
+  // 在结果弹窗中
+  const overlay = document.getElementById('result-overlay');
+  if (overlay.classList.contains('show')) {
+    if (e.key === 'Escape') { e.preventDefault(); closeInterpretation(); }
+    return;
+  }
+
+  // 在帮助面板中
+  const helpOverlay = document.getElementById('help-overlay');
+  if (helpOverlay.classList.contains('show')) {
+    if (e.key === 'Escape' || e.key === '?') { e.preventDefault(); toggleHelp(); }
+    return;
+  }
+
+  switch (e.key) {
+    case 'ArrowLeft':
+      e.preventDefault();
+      doScroll(-1);
+      break;
+    case 'ArrowRight':
+      e.preventDefault();
+      doScroll(1);
+      break;
+    case 'Enter':
+    case ' ':
+      e.preventDefault();
+      selectCardByKeyboard();
+      break;
+    case 'Delete':
+    case 'Backspace':
+      e.preventDefault();
+      removeLastSelected();
+      break;
+    case 'Escape':
+      e.preventDefault();
+      if (selectedIndices.size > 0) {
+        selectedIndices.clear();
+        showToast('✊ 已清空全部已选牌');
+        refreshAvailableCards();
+        renderSelectedCards();
+        updateSubmitBtn();
+      }
+      break;
+    case 's':
+    case 'S':
+      e.preventDefault();
+      if (selectedIndices.size > 0) showInterpretation();
+      break;
+    case '?':
+      e.preventDefault();
+      toggleHelp();
+      break;
+  }
+}
+
+function selectCardByKeyboard() {
+  const idx = hoveredIndex >= 0 ? hoveredIndex : (kbHoverIndex >= 0 ? kbHoverIndex : 0);
+  if (idx < 0) return;
+  handleSelectCard(idx);
+}
+
+function removeLastSelected() {
+  if (selectedIndices.size === 0) return;
+  const last = [...selectedIndices].pop();
+  selectedIndices.delete(last);
+  showToast(`移除：${TAROT_CARDS[last].name}（剩余${selectedIndices.size}张）`);
+  refreshAvailableCards();
+  renderSelectedCards();
+  updateSubmitBtn();
+}
+
+function toggleHelp() {
+  const overlay = document.getElementById('help-overlay');
+  overlay.classList.toggle('show');
+}
+
+// ============================================================
+// 渲染
+// ============================================================
+
+function renderAvailableCards() {
+  const scroll = document.getElementById('available-scroll');
+  scroll.innerHTML = '';
+  TAROT_CARDS.forEach((card, idx) => {
+    const c = document.createElement('div');
+    c.className = 'avail-card';
+    c.id = 'avail-card-' + idx;
+    if (selectedIndices.has(idx)) c.classList.add('selected-card');
+    if (idx === hoveredIndex) c.classList.add('hovered');
+    c.innerHTML = `
+      <div class="card-symbol">${card.symbol}</div>
+      <div class="card-name">${card.name}</div>
+      <div class="card-meaning">${card.meaning}</div>
+      <div class="hover-progress-bar"></div>
+    `;
+    // 鼠标点击选中/取消
+    c.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      if (selectedIndices.has(idx)) {
+        selectedIndices.delete(idx);
+        showToast(`移除：${card.name}`);
+        refreshAvailableCards();
+        renderSelectedCards();
+        updateSubmitBtn();
+      } else {
+        handleSelectCard(idx);
+      }
+    });
+    scroll.appendChild(c);
+  });
+}
+
+function refreshAvailableCards() {
+  // 仅更新class，不重建DOM，保留hover状态
+  document.querySelectorAll('.avail-card').forEach((c, idx) => {
+    c.classList.toggle('selected-card', selectedIndices.has(idx));
+  });
+}
+
+function renderSelectedCards() {
+  const scroll = document.getElementById('selected-scroll');
+  scroll.innerHTML = '';
+  const empty = document.getElementById('sel-empty');
+
+  if (selectedIndices.size === 0) {
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  let offset = 0;
+  selectedIndices.forEach(idx => {
+    const card = TAROT_CARDS[idx];
+    const c = document.createElement('div');
+    c.className = 'sel-card';
+    c.style.animationDelay = `${offset * 0.15}s`;
+    c.innerHTML = `
+      <div class="card-symbol">${card.symbol}</div>
+      <div class="card-name">${card.name}</div>
+      <div class="card-meaning">${card.meaning}</div>
+    `;
+    // 点击已选牌可移除
+    c.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      selectedIndices.delete(idx);
+      showToast(`移除：${card.name}（剩余${selectedIndices.size}张）`);
+      refreshAvailableCards();
+      renderSelectedCards();
+      updateSubmitBtn();
+    });
+    scroll.appendChild(c);
+    offset++;
+  });
+}
+
+function updateHoverCard(idx) {
+  if (hoveredIndex === idx) return;
+  hoveredIndex = idx;
+  document.querySelectorAll('.avail-card').forEach((c, i) => {
+    c.classList.toggle('hovered', i === idx);
+  });
+  if (idx >= 0) {
+    const scrollEl = document.getElementById('available-scroll');
+    const cardEl = document.getElementById('avail-card-' + idx);
+    if (cardEl && scrollEl) {
+      cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }
+}
+
+function updateSubmitBtn() {
+  const btn = document.getElementById('submit-btn');
+  if (selectedIndices.size > 0) {
+    btn.classList.add('visible');
+    btn.textContent = `✦ 提交解读 (${selectedIndices.size}张) ✦`;
+  } else {
+    btn.classList.remove('visible');
+  }
+}
+
+// ============================================================
+// 主循环
+// ============================================================
+
+async function detectLoop() {
+  if (!landmarker || video.readyState < 2) {
+    requestAnimationFrame(detectLoop);
+    return;
+  }
+
+  const results = landmarker.detectForVideo(video, performance.now());
+  skCtx.clearRect(0, 0, skeletonCanvas.width, skeletonCanvas.height);
+
+  if (results.landmarks && results.landmarks.length > 0) {
+    results.landmarks.forEach(lms => drawSkeleton(lms, skCtx));
+
+    const lms = results.landmarks[0];
+    const indexTip = updatePointingFromLandmark(lms);
+
+    const gestureResult = recognizeGesture(lms);
+    const gesture = gestureResult.gesture;
+    const pinchDist = gestureResult.pinchDist;
+    const avgOpen = gestureResult.avgOpen;
+
+    // 悬停计时器：手指持续指向同一张卡180帧≈3秒
+    if (hoveredIndex >= 0) {
+      if (hoveredIndex === lastPointedCard) {
+        hoverHoldFrames++;
+        updateHoverProgress(hoveredIndex, hoverHoldFrames / 180);
+        if (hoverHoldFrames >= 180 && !selectedIndices.has(hoveredIndex)) {
+          handleSelectCard(hoveredIndex);
+          hoverHoldFrames = 0;
+          updateHoverProgress(hoveredIndex, 0);
+        }
+      } else {
+        // 卡变了，重置
+        if (lastPointedCard >= 0) updateHoverProgress(lastPointedCard, 0);
+        lastPointedCard = hoveredIndex;
+        hoverHoldFrames = 1;
+        updateHoverProgress(hoveredIndex, 1 / 180);
+      }
+    } else {
+      // 没有指向任何卡
+      if (lastPointedCard >= 0) updateHoverProgress(lastPointedCard, 0);
+      hoverHoldFrames = 0;
+      lastPointedCard = -1;
+    }
+
+    // 手势冷却
+    if (gesture !== lastGesture) {
+      gestureCooldown = 0;
+      lastGesture = gesture;
+    } else {
+      gestureCooldown++;
+    }
+
+    if (gestureCooldown === 8) {
+      handleGesture(gesture);
+      if (gesture !== 'fist_holding') fistHoldFrames = 0;
+    }
+
+    if (scrollCooldown > 0) scrollCooldown--;
+
+    updateUI(gesture);
+
+    // Debug 面板
+    const palmSize = Math.sqrt(
+      (lms[0].x - lms[9].x) ** 2 + (lms[0].y - lms[9].y) ** 2
+    );
+    const fingerDist0 = Math.sqrt(
+      (lms[4].x - lms[3].x) ** 2 + (lms[4].y - lms[3].y) ** 2
+    ) / palmSize;
+    document.getElementById('dbg-pinch').textContent = pinchDist.toFixed(3);
+    document.getElementById('dbg-avgopen').textContent = avgOpen.toFixed(3);
+    document.getElementById('dbg-finger0').textContent = fingerDist0.toFixed(3);
+    document.getElementById('dbg-hovered').textContent = hoveredIndex;
+    document.getElementById('dbg-lasthover').textContent = lastHoveredValid ? lastHoveredIndex : '—';
+    document.getElementById('dbg-gesture').textContent = gesture;
+    document.getElementById('dbg-scrolldir').textContent = scrollDir;
+    document.getElementById('dbg-hoverhold').textContent = hoverHoldFrames;
+    document.getElementById('dbg-fistframes').textContent = fistHoldFrames;
+    document.getElementById('dbg-openpalm').textContent = openPalmFrames;
+    document.getElementById('dbg-indextip').textContent = `${indexTip.x.toFixed(0)},${indexTip.y.toFixed(0)}`;
+  } else {
+    updateUI('none');
+    lastGesture = 'none';
+    scrollDir = 0;
+    scrollStableFrames = 0;
+    fistHoldFrames = 0;
+    hoverHoldFrames = 0;
+    openPalmFrames = 0;
+    if (lastPointedCard >= 0) updateHoverProgress(lastPointedCard, 0);
+    lastPointedCard = -1;
+    document.getElementById('scroll-left').classList.remove('active');
+    document.getElementById('scroll-right').classList.remove('active');
+    document.getElementById('dbg-finger0').textContent = '—';
+    document.getElementById('dbg-hovered').textContent = '—';
+    document.getElementById('dbg-gesture').textContent = '—';
+    document.getElementById('dbg-scrolldir').textContent = '—';
+    document.getElementById('dbg-hoverhold').textContent = '—';
+    document.getElementById('dbg-fistframes').textContent = '—';
+    document.getElementById('dbg-openpalm').textContent = '—';
+    document.getElementById('dbg-indextip').textContent = '—';
+  }
+
+  requestAnimationFrame(detectLoop);
+}
+
+// ============================================================
+// 骨骼绘制
+// ============================================================
+
+function drawSkeleton(landmarks, ctx) {
+  const w = skeletonCanvas.width;
+  const h = skeletonCanvas.height;
+  const gc = 'rgba(0,255,200,0.25)';
+  const lc = 'rgba(0,255,200,0.45)';
+  const jc = 'rgba(0,255,200,0.85)';
+
+  const wrist = { x: landmarks[0].x * w, y: landmarks[0].y * h };
+  const palmW = Math.sqrt((landmarks[5].x-landmarks[0].x)**2+(landmarks[5].y-landmarks[0].y)**2) * w * 1.6;
+
+  ctx.strokeStyle = gc;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.rect(wrist.x - palmW/2, wrist.y - palmW*0.3, palmW, palmW * 0.9);
+  ctx.stroke();
+
+  ctx.lineWidth = 2;
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = gc;
+  for (const [a, b] of HAND_CONNECTIONS) {
+    ctx.strokeStyle = lc;
+    ctx.beginPath();
+    ctx.moveTo(landmarks[a].x * w, landmarks[a].y * h);
+    ctx.lineTo(landmarks[b].x * w, landmarks[b].y * h);
+    ctx.stroke();
+  }
+
+  for (let i = 0; i < landmarks.length; i++) {
+    const x = landmarks[i].x * w;
+    const y = landmarks[i].y * h;
+    const isTip = FINGER_TIPS.includes(i);
+    ctx.shadowBlur = isTip ? 16 : 8;
+    ctx.shadowColor = gc;
+    ctx.fillStyle = jc;
+    ctx.beginPath();
+    ctx.arc(x, y, isTip ? 6 : 3.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = gc;
+  ctx.beginPath();
+  ctx.arc(wrist.x, wrist.y, 12, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function updatePointingFromLandmark(landmarks) {
+  const w = skeletonCanvas.width;
+  const h = skeletonCanvas.height;
+  const fingerX = landmarks[8].x * w;
+  const fingerY = landmarks[8].y * h;
+
+  const cards = document.querySelectorAll('.avail-card');
+  let found = -1;
+  cards.forEach((card, idx) => {
+    const rect = card.getBoundingClientRect();
+    if (fingerX >= rect.left && fingerX <= rect.right && fingerY >= rect.top && fingerY <= rect.bottom) {
+      found = idx;
+    }
+  });
+
+  if (found !== -1) {
+    lastHoveredIndex = found;
+    lastHoveredValid = true;
+    if (found !== hoveredIndex) {
+      updateHoverCard(found);
+    }
+  }
+  return { x: fingerX, y: fingerY };
+}
+
+// ============================================================
+// 手势识别
+// ============================================================
+
+function recognizeGesture(landmarks) {
+  const palmSize = Math.sqrt(
+    (landmarks[0].x - landmarks[9].x) ** 2 +
+    (landmarks[0].y - landmarks[9].y) ** 2
+  );
+
+  const fingerDist = FINGER_TIPS.map((tip, i) => {
+    const dx = landmarks[tip].x - landmarks[FINGER_PIPS[i]].x;
+    const dy = landmarks[tip].y - landmarks[FINGER_PIPS[i]].y;
+    return Math.sqrt(dx*dx + dy*dy) / palmSize;
+  });
+
+  const pinchDist = Math.sqrt(
+    (landmarks[4].x - landmarks[8].x) ** 2 +
+    (landmarks[4].y - landmarks[8].y) ** 2
+  ) / palmSize;
+
+  const avgOpen = fingerDist.reduce((a, b) => a + b, 0) / 5;
+
+  // 1) 捏合 = 选中（阈值放宽到0.28，更易触发）
+  if (pinchDist < 0.28) {
+    openPalmFrames = 0;
+    return { gesture: 'ok', pinchDist, avgOpen, fingerDist };
+  }
+
+  // 2) 握拳 = 清空全部
+  // 所有手指都弯曲 (每个fingerDist < 0.3) 且平均张开度低
+  const allFingersClosed = fingerDist.every(d => d < 0.3);
+  if (avgOpen < 0.24 && allFingersClosed) {
+    fistHoldFrames++;
+    openPalmFrames = 0;
+    if (fistHoldFrames >= 90) {
+      fistHoldFrames = 0;
+      return { gesture: 'fist', pinchDist, avgOpen, fingerDist };
+    }
+    return { gesture: 'fist_holding', pinchDist, avgOpen, fingerDist };
+  } else {
+    fistHoldFrames = 0;
+  }
+
+  // 3) 张开手掌 = 提交解读
+  // 所有手指伸展 (avgOpen > 0.5) 持续120帧≈2秒
+  if (avgOpen > 0.5) {
+    openPalmFrames++;
+    if (openPalmFrames >= 120) {
+      openPalmFrames = 0;
+      return { gesture: 'submit', pinchDist, avgOpen, fingerDist };
+    }
+  } else {
+    openPalmFrames = 0;
+  }
+
+  return { gesture: 'none', pinchDist, avgOpen, fingerDist };
+}
+
+function updateHoverProgress(cardIdx, progress) {
+  const el = document.getElementById('avail-card-' + cardIdx);
+  if (!el) return;
+  const bar = el.querySelector('.hover-progress-bar');
+  if (bar) {
+    bar.style.width = Math.min(100, progress * 100) + '%';
+  }
+}
+
+// ============================================================
+// 方向追踪（实时）
+// ============================================================
+
+function updateScrollDirection(landmarks) {
+  const handX = landmarks[0].x * skeletonCanvas.width;
+  const dx = handX - lastHandX;
+  lastHandX = handX;
+
+  if (Math.abs(dx) > 8) {
+    scrollDx = dx;
+    scrollDir = dx < 0 ? -1 : 1;
+  } else {
+    scrollDir = 0;
+  }
+
+  if (scrollDir !== 0) {
+    scrollStableFrames++;
+  } else {
+    scrollStableFrames = 0;
+  }
+
+  const leftEl = document.getElementById('scroll-left');
+  const rightEl = document.getElementById('scroll-right');
+  leftEl.classList.toggle('active', scrollDir === -1 && scrollStableFrames > 6);
+  rightEl.classList.toggle('active', scrollDir === 1 && scrollStableFrames > 6);
+
+  if (scrollCooldown > 0) {
+    scrollCooldown--;
+    return;
+  }
+
+  if (scrollStableFrames === 10) {
+    doScroll(scrollDir);
+  }
+}
+
+function doScroll(dir) {
+  scrollCooldown = 60;
+  const scrollEl = document.getElementById('available-scroll');
+  const cardWidth = 88 + 14;
+  const move = dir * cardWidth * 3;
+  scrollEl.scrollLeft += move;
+  showToast(dir < 0 ? '◀ 向左翻页' : '▶ 向右翻页');
+}
+
+// ============================================================
+// 选中/取消 共享方法
+// ============================================================
+
+function handleSelectCard(idx) {
+  if (idx < 0 || idx >= TAROT_CARDS.length) return;
+  if (selectedIndices.has(idx)) {
+    showToast(`🤏 已选中：${TAROT_CARDS[idx].name}`);
+    return;
+  }
+  selectedIndices.add(idx);
+  showToast(`🤏 选中：${TAROT_CARDS[idx].name}（${selectedIndices.size}张）`);
+  refreshAvailableCards();
+  renderSelectedCards();
+  updateSubmitBtn();
+  hoverHoldFrames = 0;
+  updateHoverProgress(idx, 0);
+}
+
+// ============================================================
+// 手势动作分发
+// ============================================================
+
+function handleGesture(gesture) {
+  switch (gesture) {
+    case 'ok': {
+      const selectIdx = lastHoveredValid ? lastHoveredIndex : hoveredIndex;
+      if (selectIdx < 0) break;
+      handleSelectCard(selectIdx);
+      break;
+    }
+    case 'fist': {
+      if (selectedIndices.size > 0) {
+        selectedIndices.clear();
+        showToast('✊ 已清空全部（' + TAROT_CARDS.length + '张待选）');
+        refreshAvailableCards();
+        renderSelectedCards();
+        updateSubmitBtn();
+      } else {
+        showToast('✊ 握拳（无已选牌）');
+      }
+      break;
+    }
+    case 'submit': {
+      if (selectedIndices.size > 0) {
+        showInterpretation();
+      } else {
+        showToast('🖐 请先选择至少一张牌');
+      }
+      break;
+    }
+  }
+}
+
+// ============================================================
+// 解读器
+// ============================================================
+
+function generateReading(indices) {
+  const cards = [...indices].map(i => TAROT_CARDS[i]);
+  const positions = ['过去', '现在', '未来', '阻碍', '结果', '建议', '环境', '内心', '期望', '基石'];
+
+  let reading = '';
+  cards.forEach((card, i) => {
+    const pos = positions[i] || `位置${i+1}`;
+    reading += `【${pos}】${card.name}（${card.symbol}）— ${card.meaning}\n\n`;
+  });
+
+  // 综合解读
+  const themes = cards.map(c => c.meaning.split('·')[0]);
+  const names = cards.map(c => c.name).join('、');
+
+  reading += `━━━━━━━━━━━━━━━━━━━\n\n`;
+  reading += `综合解读：\n`;
+  reading += `你抽取了 ${cards.length} 张牌——${names}。\n\n`;
+  reading += `牌面主题围绕「${themes.join('」「')}」展开。`;
+
+  if (cards.length === 1) {
+    reading += ` 这张牌是你当前状态的一面镜子，建议你深入体会牌面的象征含义，结合自己的处境做出判断。`;
+  } else if (cards.length === 3) {
+    reading += ` 过去-现在-未来的时间线已经展开：从「${cards[0].name}」的起点，经过「${cards[1].name}」的转折，走向「${cards[2].name}」的终点。`;
+  } else {
+    reading += ` 这些牌相互呼应，暗示着你正处在一个关键的十字路口。宇宙的讯息已经传递，请静心聆听内心的声音。`;
+  }
+
+  reading += `\n\n命运之轮不停转动，当下的困惑终将消散。记住：塔罗是指引，而非宿命。你永远拥有选择的权利。`;
+
+  return reading;
+}
+
+function showInterpretation() {
+  const overlay = document.getElementById('result-overlay');
+  const cardsContainer = document.getElementById('result-cards');
+  const readingEl = document.getElementById('result-reading').querySelector('.rr-text');
+
+  // 渲染选中牌
+  cardsContainer.innerHTML = '';
+  const indicesArr = [...selectedIndices];
+  indicesArr.forEach(idx => {
+    const card = TAROT_CARDS[idx];
+    const div = document.createElement('div');
+    div.className = 'result-card';
+    div.innerHTML = `
+      <div class="rc-symbol">${card.symbol}</div>
+      <div class="rc-name">${card.name}</div>
+      <div class="rc-meaning">${card.meaning}</div>
+    `;
+    cardsContainer.appendChild(div);
+  });
+
+  // 生成解读
+  readingEl.textContent = generateReading(selectedIndices);
+
+  overlay.classList.add('show');
+  showToast('✨ 解读已生成');
+}
+
+function closeInterpretation() {
+  document.getElementById('result-overlay').classList.remove('show');
+}
+
+function resetAll() {
+  selectedIndices.clear();
+  refreshAvailableCards();
+  renderSelectedCards();
+  updateSubmitBtn();
+  closeInterpretation();
+  showToast('🔄 已重置，开始新的占卜');
+}
+
+// ============================================================
+// UI 更新
+// ============================================================
+
+function updateUI(gesture) {
+  const gname = { ok:'🤏捏合', fist:'✊握拳', fist_holding:'✊握拳中', submit:'🖐提交', none:'—' };
+  document.getElementById('current-gesture').textContent = gname[gesture] || '—';
+  document.getElementById('mode-label').textContent =
+    selectedIndices.size > 0 ? `已选${selectedIndices.size}张` : '等待中';
+
+  const ids = ['ok','fist','submit','left','right'];
+  ids.forEach(id => {
+    const el = document.getElementById('gest-' + id);
+    if (!el) return;
+    const active = gesture === id ||
+      (id === 'left' && scrollDir === -1) ||
+      (id === 'right' && scrollDir === 1) ||
+      (id === 'fist' && gesture === 'fist_holding') ||
+      (id === 'submit' && openPalmFrames > 30);
+    el.classList.toggle('active', active);
+  });
+}
+
+function showToast(msg) {
+  const el = document.getElementById('action-toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+// ============================================================
+// 启动
+// ============================================================
+init();
+</script>
+</body>
+</html>
