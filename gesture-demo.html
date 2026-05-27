@@ -71,6 +71,10 @@
     pointer-events: none;
   }
 
+  /* 恢复卡片区域点击能力 */
+  #available-scroll, #selected-scroll { pointer-events: auto; }
+  .avail-card, .sel-card { pointer-events: auto; }
+
   #available-area {
     position: relative;
     height: 52%;
@@ -812,8 +816,12 @@ let hoveredIndex = -1;
 let lastHoveredIndex = 0;
 let lastHoveredValid = false;
 let lastGesture = 'none';
-let gestureCooldown = 0;
 let scrollCooldown = 0;
+
+// 手势防抖 (触后冷却帧数)
+let okDebounce = 0;
+let fistDebounce = 0;
+let submitDebounce = 0;
 
 // 手势方向追踪
 let lastHandX = 0;
@@ -956,6 +964,26 @@ function setupEventListeners() {
       doScroll(dx > 0 ? -1 : 1);
     }
   });
+
+  // 底部手势卡片点击模拟
+  document.getElementById('gest-ok').addEventListener('click', () => {
+    const idx = lastHoveredValid ? lastHoveredIndex : (hoveredIndex >= 0 ? hoveredIndex : 0);
+    handleSelectCard(idx);
+  });
+  document.getElementById('gest-fist').addEventListener('click', () => {
+    if (selectedIndices.size > 0) {
+      selectedIndices.clear();
+      showToast('✊ 已清空全部');
+      refreshAvailableCards();
+      renderSelectedCards();
+      updateSubmitBtn();
+    }
+  });
+  document.getElementById('gest-submit').addEventListener('click', () => {
+    if (selectedIndices.size > 0) showInterpretation();
+  });
+  document.getElementById('gest-left').addEventListener('click', () => doScroll(-1));
+  document.getElementById('gest-right').addEventListener('click', () => doScroll(1));
 }
 
 // ============================================================
@@ -981,10 +1009,17 @@ function handleKeyboard(e) {
     case 'ArrowLeft':
       e.preventDefault();
       doScroll(-1);
+      // 键盘光标左移
+      if (kbHoverIndex < 0) kbHoverIndex = 0;
+      kbHoverIndex = Math.max(0, kbHoverIndex - 3);
+      updateHoverCard(kbHoverIndex);
       break;
     case 'ArrowRight':
       e.preventDefault();
       doScroll(1);
+      if (kbHoverIndex < 0) kbHoverIndex = 0;
+      kbHoverIndex = Math.min(TAROT_CARDS.length - 1, kbHoverIndex + 3);
+      updateHoverCard(kbHoverIndex);
       break;
     case 'Enter':
     case ' ':
@@ -1071,6 +1106,18 @@ function renderAvailableCards() {
         handleSelectCard(idx);
       }
     });
+    // 右键直接移除
+    c.addEventListener('contextmenu', (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      if (selectedIndices.has(idx)) {
+        selectedIndices.delete(idx);
+        showToast(`移除：${card.name}`);
+        refreshAvailableCards();
+        renderSelectedCards();
+        updateSubmitBtn();
+      }
+    });
     scroll.appendChild(c);
   });
 }
@@ -1106,6 +1153,16 @@ function renderSelectedCards() {
     `;
     // 点击已选牌可移除
     c.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      selectedIndices.delete(idx);
+      showToast(`移除：${card.name}（剩余${selectedIndices.size}张）`);
+      refreshAvailableCards();
+      renderSelectedCards();
+      updateSubmitBtn();
+    });
+    // 右键也可移除
+    c.addEventListener('contextmenu', (ev) => {
+      ev.preventDefault();
       ev.stopPropagation();
       selectedIndices.delete(idx);
       showToast(`移除：${card.name}（剩余${selectedIndices.size}张）`);
@@ -1191,18 +1248,29 @@ async function detectLoop() {
       lastPointedCard = -1;
     }
 
-    // 手势冷却
-    if (gesture !== lastGesture) {
-      gestureCooldown = 0;
-      lastGesture = gesture;
-    } else {
-      gestureCooldown++;
+    // 手势触发（ok/fist/submit 首次检测到即触发，带防抖）
+    if (gesture === 'ok') {
+      if (okDebounce <= 0) {
+        handleGesture('ok');
+        okDebounce = 40;
+      }
+    } else if (gesture === 'fist') {
+      if (fistDebounce <= 0) {
+        handleGesture('fist');
+        fistDebounce = 60;
+      }
+    } else if (gesture === 'submit') {
+      if (submitDebounce <= 0) {
+        handleGesture('submit');
+        submitDebounce = 90;
+      }
     }
+    if (okDebounce > 0) okDebounce--;
+    if (fistDebounce > 0) fistDebounce--;
+    if (submitDebounce > 0) submitDebounce--;
 
-    if (gestureCooldown === 8) {
-      handleGesture(gesture);
-      if (gesture !== 'fist_holding') fistHoldFrames = 0;
-    }
+    // 更新 lastGesture 用于 UI
+    lastGesture = gesture;
 
     if (scrollCooldown > 0) scrollCooldown--;
 
@@ -1350,7 +1418,7 @@ function recognizeGesture(landmarks) {
   const avgOpen = fingerDist.reduce((a, b) => a + b, 0) / 5;
 
   // 1) 捏合 = 选中（阈值放宽到0.28，更易触发）
-  if (pinchDist < 0.28) {
+  if (pinchDist < 0.35) {
     openPalmFrames = 0;
     return { gesture: 'ok', pinchDist, avgOpen, fingerDist };
   }
