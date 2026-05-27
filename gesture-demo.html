@@ -1131,14 +1131,18 @@ function refreshAvailableCards() {
 
 function renderSelectedCards() {
   const scroll = document.getElementById('selected-scroll');
+  // 先保存 sel-empty 引用，因为 innerHTML = '' 会把它也清掉
+  const emptyEl = document.getElementById('sel-empty');
   scroll.innerHTML = '';
-  const empty = document.getElementById('sel-empty');
 
   if (selectedIndices.size === 0) {
-    empty.style.display = 'block';
+    // 重新插入空状态提示
+    const empty = document.createElement('div');
+    empty.id = 'sel-empty';
+    empty.textContent = '暂无选中的牌';
+    scroll.appendChild(empty);
     return;
   }
-  empty.style.display = 'none';
 
   let offset = 0;
   selectedIndices.forEach(idx => {
