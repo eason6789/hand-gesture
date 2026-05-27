@@ -21,13 +21,13 @@ if (!$input || empty($input['messages'])) {
 $apiKey = 'REMOVED_API_KEY';
 
 $payload = json_encode([
-    'model' => 'MiniMax-M2.7',
+    'model' => 'abab6.5s-chat',
     'messages' => $input['messages'],
-    'max_tokens' => isset($input['max_tokens']) ? $input['max_tokens'] : 800,
-    'temperature' => 0.85,
+    'max_tokens' => isset($input['max_tokens']) ? $input['max_tokens'] : 1024,
+    'temperature' => 0.9,
 ]);
 
-$ch = curl_init('https://api.minimax.io/v1/chat/completions');
+$ch = curl_init('https://api.minimax.chat/v1/chat/completions');
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_POST => true,
@@ -49,4 +49,12 @@ if ($httpCode !== 200) {
     exit;
 }
 
-echo $response;
+$data = json_decode($response, true);
+if ($data && isset($data['choices'][0]['message']['content'])) {
+    // 去掉 MiniMax M2 模型的 <think>...</think> 推理标签
+    $content = $data['choices'][0]['message']['content'];
+    $content = preg_replace('/<think>.*?<\/think>\s*/s', '', $content);
+    $data['choices'][0]['message']['content'] = trim($content);
+}
+
+echo json_encode($data);

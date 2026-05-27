@@ -68,45 +68,122 @@ detectLoop() [每帧执行]
 ### 启动
 ```bash
 cd /Users/easonlv/progs/hand-gesture
+
+# 方式1: Python (端口 8080)
 python3 -m http.server 8080
 # 访问 http://localhost:8080/gesture-demo.html
-```
 
-或使用 Node.js:
-```bash
+# 方式2: Node.js (端口 3000)
 npx serve .
 # 访问 http://localhost:3000/gesture-demo.html
+
+# 方式3: PHP 内置服务器 (端口 8888, 支持 proxy.php)
+php -S localhost:8888
+# 访问 http://localhost:8888/gesture-demo.html
 ```
 
-> **注意**: 直接用 `file://` 协议打开会导致摄像头权限被拒绝。
+> **注意**: 直接用 `file://` 协议打开会导致摄像头权限被拒绝。AI 解读功能依赖 `proxy.php`，需要 PHP 环境。
 
 ## 部署
 
 ### 服务器要求
 - Nginx (或其他 HTTP 服务器)
+- PHP-FPM 8.0+ (AI 解读代理需要)
 - **必须启用 HTTPS**（摄像头 API 要求安全上下文）
-- 静态文件服务，无需后端
+- 开放端口: **80** (HTTP, 重定向到 HTTPS), **443** (HTTPS)
 
-### Nginx 配置示例
-```nginx
-location /hand-gesture/ {
-    alias /var/www/hand-gesture/;
-    index gesture-demo.html;
-    # 确保 .task 文件以正确 MIME 类型提供
-    location ~ \.task$ {
-        types { application/octet-stream task; }
-    }
-}
+### 文件清单（需要上传的文件）
+```
+hand-gesture/
+├── gesture-demo.html        # 主应用 (~57KB)
+├── hand_landmarker.task     # MediaPipe 手部模型 (7.8MB)
+├── proxy.php                # MiniMax AI API 代理
+├── cards/                   # 卡牌图片目录
+└── README.md
 ```
 
 ### 部署步骤
-```bash
-# 上传文件
-scp -r gesture-demo.html hand_landmarker.task cards/ root@SERVER_IP:/var/www/hand-gesture/
 
-# 更新 Nginx 配置并重载
-ssh root@SERVER_IP "nginx -t && systemctl reload nginx"
+**1. 上传文件到服务器**
+```bash
+# 创建目录
+ssh root@119.29.178.222 "mkdir -p /var/www/hand-gesture/cards"
+
+# 上传文件
+scp gesture-demo.html hand_landmarker.task proxy.php root@119.29.178.222:/var/www/hand-gesture/
+scp cards/*.png root@119.29.178.222:/var/www/hand-gesture/cards/
 ```
+
+**2. Nginx 配置** (`/etc/nginx/conf.d/tuteng3.site.conf`)
+```nginx
+# 静态文件 (hand_landmarker.task, HTML, cards/)
+location ^~ /hand-gesture/ {
+    alias /var/www/hand-gesture/;
+    index gesture-demo.html;
+    
+    # .task 模型文件 MIME 类型
+    location ~ \.task$ {
+        types { application/octet-stream task; }
+        add_header Cache-Control "public, max-age=86400";
+    }
+    
+    # 卡牌图片缓存
+    location ~ \.(png|jpg|webp)$ {
+        add_header Cache-Control "public, max-age=604800";
+    }
+}
+
+# PHP 代理 (MiniMax AI API)
+location = /hand-gesture/proxy.php {
+    alias /var/www/hand-gesture/proxy.php;
+    fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;  # 根据实际 PHP 版本调整
+    fastcgi_index proxy.php;
+    fastcgi_param SCRIPT_FILENAME /var/www/hand-gesture/proxy.php;
+    include fastcgi_params;
+    fastcgi_read_timeout 60s;  # AI 调用可能较慢
+}
+```
+
+**3. PHP-FPM 配置检查**
+```bash
+# 确认 PHP-FPM 运行状态和版本
+ssh root@119.29.178.222 "systemctl status php*-fpm"
+# 查看实际 socket 路径
+ssh root@119.29.178.222 "ls /var/run/php/"
+# 根据实际版本修改 Nginx 中的 fastcgi_pass 路径
+```
+
+**4. 重载服务**
+```bash
+ssh root@119.29.178.222 "nginx -t && systemctl reload nginx"
+```
+
+### 验证部署
+```bash
+# 1. 主页可访问
+curl -sI https://tuteng3.site/hand-gesture/gesture-demo.html | head -1
+# HTTP/1.1 200 OK
+
+# 2. 模型文件可下载 (Content-Type: application/octet-stream)
+curl -sI https://tuteng3.site/hand-gesture/hand_landmarker.task | head -1
+# HTTP/1.1 200 OK
+
+# 3. AI 代理正常工作
+curl -s -X POST https://tuteng3.site/hand-gesture/proxy.php \
+  -H 'Content-Type: application/json' \
+  -d '{"messages":[{"role":"user","content":"你好"}]}' | head -c 200
+# 应返回 JSON 格式的 AI 回复
+```
+
+### 服务端口总览
+
+| 服务 | 端口 | 用途 |
+|------|------|------|
+| Nginx HTTP | 80 | 重定向到 HTTPS |
+| Nginx HTTPS | 443 | 主服务入口 |
+| PHP-FPM Socket | unix socket | PHP 解析 (proxy.php) |
+| 本地开发 Python | 8080 | 本地测试 (无 AI 功能) |
+| 本地开发 PHP | 8888 | 本地测试 (含 AI 功能) |
 
 ## 文件说明
 

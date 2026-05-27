@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -8,26 +8,73 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #0a0a0f;
-    --card-bg: rgba(18, 18, 26, 0.92);
-    --accent: #7c5ce0;
-    --accent2: #c44eff;
-    --accent3: #00ffc8;
-    --text: #e8e4f0;
-    --muted: #6b6480;
-    --glow: rgba(124, 92, 224, 0.4);
-    --gold: #ffd700;
-    --red: #ff4444;
+    --bg-deep: #07070f;
+    --bg: #0B0B1A;
+    --bg-elevated: #111128;
+    --bg-card: #151530;
+    --bg-card-hover: #1C1C3A;
+    --accent: #8B5CF6;
+    --accent2: #A78BFA;
+    --accent3: #00E5FF;
+    --gold: #FBBF24;
+    --gold-dim: #B8860B;
+    --text: #F1F0F8;
+    --text-secondary: #B8B5C8;
+    --muted: #6B6880;
+    --glow-purple: rgba(139, 92, 246, 0.45);
+    --glow-cyan: rgba(0, 229, 255, 0.35);
+    --glow-gold: rgba(251, 191, 36, 0.3);
+    --border: rgba(139, 92, 246, 0.2);
+    --border-active: rgba(139, 92, 246, 0.5);
+    --red: #FF4444;
+    --radius-sm: 8px;
+    --radius: 12px;
+    --radius-lg: 16px;
+    --easing: cubic-bezier(0.16, 1, 0.3, 1);
+    --font-heading: Georgia, 'Times New Roman', 'Noto Serif SC', serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
   }
 
   body {
-    background: var(--bg);
+    background: radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 100%, rgba(0,229,255,0.04) 0%, transparent 50%),
+                var(--bg-deep);
     color: var(--text);
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-body);
     height: 100vh;
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
+    letter-spacing: 0.01em;
+  }
+
+  /* 背景星星粒子 */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 20% 60%, rgba(255,255,255,0.2), transparent),
+      radial-gradient(1px 1px at 30% 10%, rgba(255,255,255,0.25), transparent),
+      radial-gradient(1px 1px at 45% 75%, rgba(255,255,255,0.15), transparent),
+      radial-gradient(1px 1px at 55% 30%, rgba(255,255,255,0.2), transparent),
+      radial-gradient(1px 1px at 65% 85%, rgba(255,255,255,0.18), transparent),
+      radial-gradient(1px 1px at 75% 15%, rgba(255,255,255,0.22), transparent),
+      radial-gradient(1px 1px at 85% 55%, rgba(255,255,255,0.15), transparent),
+      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.2), transparent),
+      radial-gradient(1px 1px at 15% 90%, rgba(255,255,255,0.18), transparent),
+      radial-gradient(1.5px 1.5px at 40% 45%, rgba(251,191,36,0.4), transparent),
+      radial-gradient(1.5px 1.5px at 70% 25%, rgba(139,92,246,0.35), transparent),
+      radial-gradient(1.5px 1.5px at 25% 50%, rgba(0,229,255,0.3), transparent);
+    pointer-events: none;
+    z-index: 0;
+    animation: twinkle 4s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; }
   }
 
   /* ===== 全部堆叠层 ===== */
@@ -58,7 +105,7 @@
   #dim-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(10,10,15,0.35);
+    background: rgba(7,7,15,0.4);
     pointer-events: none;
   }
 
@@ -98,21 +145,25 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    font-weight: 500;
   }
   #sort-btn {
-    background: rgba(124,92,224,0.12);
-    border: 1px solid rgba(124,92,224,0.3);
-    color: var(--accent);
+    background: rgba(139,92,246,0.1);
+    border: 1px solid var(--border);
+    color: var(--accent2);
     border-radius: 14px;
-    padding: 3px 10px;
+    padding: 4px 12px;
     cursor: pointer;
     font-size: 12px;
-    transition: all 0.3s;
+    font-family: var(--font-body);
+    font-weight: 500;
+    transition: all 0.3s var(--easing);
     pointer-events: auto;
   }
   #sort-btn:hover {
-    background: rgba(124,92,224,0.25);
+    background: rgba(139,92,246,0.2);
     border-color: var(--accent2);
+    box-shadow: 0 0 12px rgba(139,92,246,0.2);
   }
 
   .scroll-arrow {
@@ -120,8 +171,8 @@
     top: 50%;
     transform: translateY(-50%);
     font-size: 28px;
-    color: rgba(124,92,224,0.3);
-    transition: all 0.3s;
+    color: rgba(139,92,246,0.25);
+    transition: all 0.3s var(--easing);
     z-index: 20;
     pointer-events: none;
   }
@@ -129,7 +180,7 @@
   .scroll-arrow.right { right: 14px; }
   .scroll-arrow.active {
     color: var(--accent2);
-    text-shadow: 0 0 20px var(--accent2);
+    text-shadow: 0 0 24px var(--accent2);
     transform: translateY(-50%) scale(1.3);
   }
 
@@ -151,60 +202,72 @@
     flex-shrink: 0;
     width: 88px;
     height: 130px;
-    border-radius: 8px;
-    border: 1px solid rgba(124,92,224,0.25);
-    background: linear-gradient(145deg, #1a1a2e, #16162a);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: linear-gradient(160deg, #1A1A35, #141430);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    transition: all 0.4s var(--easing);
     cursor: pointer;
     scroll-snap-align: center;
     position: relative;
     overflow: hidden;
   }
-  .avail-card .card-symbol { font-size: 22px; color: var(--accent); opacity: 0.7; }
-  .avail-card .card-name { font-size: 9px; letter-spacing: 1.5px; color: var(--accent); text-transform: uppercase; }
-  .avail-card .card-meaning { font-size: 7px; color: var(--muted); text-align: center; padding: 0 6px; line-height: 1.3; }
+  .avail-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(139,92,246,0.15), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .avail-card:hover::before { opacity: 1; }
+  .avail-card .card-symbol { font-size: 22px; color: var(--accent2); opacity: 0.8; position: relative; z-index: 1; }
+  .avail-card .card-name { font-size: 9px; letter-spacing: 1.5px; color: var(--accent2); text-transform: uppercase; position: relative; z-index: 1; font-weight: 500; }
+  .avail-card .card-meaning { font-size: 7px; color: var(--muted); text-align: center; padding: 0 6px; line-height: 1.3; position: relative; z-index: 1; }
 
   /* 悬停进度条 */
   .avail-card .hover-progress-bar {
     position: absolute;
     bottom: 0; left: 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--accent2), var(--accent3));
+    background: linear-gradient(90deg, var(--accent), var(--accent3), var(--gold));
     width: 0%;
     transition: width 0.15s linear;
     z-index: 5;
     border-radius: 0 2px 2px 0;
+    box-shadow: 0 0 8px rgba(0,229,255,0.5);
   }
 
   .avail-card.hovered {
     border-color: var(--accent2);
-    box-shadow: 0 0 24px rgba(196,78,255,0.5), 0 8px 24px rgba(0,0,0,0.5);
+    box-shadow: 0 0 30px var(--glow-purple), 0 8px 30px rgba(0,0,0,0.6);
     transform: translateY(-10px) scale(1.08);
+    background: linear-gradient(160deg, #1F1F40, #181838);
   }
 
   .avail-card.selected-card {
-    border-color: rgba(0,255,200,0.5);
-    background: rgba(0,255,200,0.06);
-    box-shadow: 0 0 16px rgba(0,255,200,0.3);
+    border-color: rgba(0,229,255,0.5);
+    background: linear-gradient(160deg, rgba(0,229,255,0.08), rgba(0,229,255,0.03));
+    box-shadow: 0 0 20px var(--glow-cyan), inset 0 0 20px rgba(0,229,255,0.05);
   }
   .avail-card.selected-card::after {
     content: '✓';
     position: absolute;
-    top: 4px; right: 6px;
+    top: 6px; right: 8px;
     font-size: 10px;
     color: var(--accent3);
+    font-weight: 700;
   }
 
   #divider {
     height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    opacity: 0.3;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent3), transparent);
+    opacity: 0.25;
     flex-shrink: 0;
   }
 
@@ -223,6 +286,8 @@
     color: var(--accent3);
     padding: 12px 0 8px;
     z-index: 10;
+    font-weight: 500;
+    text-shadow: 0 0 16px rgba(0,229,255,0.3);
   }
 
   #selected-scroll {
@@ -241,23 +306,35 @@
     flex-shrink: 0;
     width: 100px;
     height: 145px;
-    border-radius: 10px;
+    border-radius: var(--radius);
     border: 1.5px solid var(--accent3);
-    background: linear-gradient(145deg, #1a2a2e, #162028);
-    box-shadow: 0 0 22px rgba(0,255,200,0.3), 0 6px 20px rgba(0,0,0,0.5);
+    background: linear-gradient(160deg, rgba(0,229,255,0.1), rgba(0,229,255,0.03));
+    box-shadow: 0 0 28px var(--glow-cyan), 0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 7px;
-    transition: all 0.35s ease;
+    transition: all 0.4s var(--easing);
     animation: selFloat 3s ease-in-out infinite;
     position: relative;
     cursor: pointer;
   }
-  .sel-card .card-symbol { font-size: 26px; color: var(--accent3); filter: drop-shadow(0 0 8px rgba(0,255,200,0.5)); }
-  .sel-card .card-name { font-size: 10px; letter-spacing: 1.5px; color: var(--accent3); text-transform: uppercase; }
-  .sel-card .card-meaning { font-size: 7.5px; color: var(--muted); text-align: center; padding: 0 8px; line-height: 1.3; }
+  .sel-card::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: var(--radius);
+    background: linear-gradient(160deg, var(--accent3), transparent 60%, var(--gold));
+    opacity: 0;
+    transition: opacity 0.4s;
+    z-index: -1;
+    filter: blur(8px);
+  }
+  .sel-card:hover::before { opacity: 0.6; }
+  .sel-card .card-symbol { font-size: 26px; color: var(--accent3); filter: drop-shadow(0 0 10px rgba(0,229,255,0.6)); position: relative; z-index: 1; }
+  .sel-card .card-name { font-size: 10px; letter-spacing: 1.5px; color: var(--accent3); text-transform: uppercase; position: relative; z-index: 1; font-weight: 600; }
+  .sel-card .card-meaning { font-size: 7.5px; color: var(--text-secondary); text-align: center; padding: 0 8px; line-height: 1.3; position: relative; z-index: 1; }
 
   @keyframes selFloat {
     0%,100% { transform: translateY(0) rotate(-1.5deg); }
@@ -280,18 +357,27 @@
     position: fixed;
     top: 0; left: 0; right: 0;
     height: 48px;
-    background: rgba(10,10,15,0.85);
-    border-bottom: 1px solid rgba(124,92,224,0.2);
-    backdrop-filter: blur(12px);
+    background: rgba(11,11,26,0.88);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
     z-index: 200;
   }
-  header h1 { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); }
-  #gesture-label { font-size: 10px; color: var(--muted); }
-  #gesture-label span { color: var(--accent2); }
+  header h1 {
+    font-family: var(--font-heading);
+    font-size: 14px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    font-weight: 600;
+    text-shadow: 0 0 20px rgba(139,92,246,0.4);
+  }
+  #gesture-label { font-size: 10px; color: var(--muted); font-family: var(--font-body); }
+  #gesture-label span { color: var(--accent3); }
 
   /* ========== 底部手势面板 ========== */
   #panel {
@@ -299,33 +385,41 @@
     bottom: 14px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(18,18,26,0.9);
-    border: 1px solid rgba(124,92,224,0.3);
-    border-radius: 12px;
-    padding: 10px 20px;
-    backdrop-filter: blur(16px);
+    background: rgba(17,17,40,0.92);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 12px 24px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     display: flex;
-    gap: 16px;
+    gap: 12px;
     z-index: 200;
-    box-shadow: 0 6px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(139,92,246,0.08);
     flex-wrap: wrap;
     justify-content: center;
   }
   .gesture-card {
     text-align: center;
-    padding: 7px 12px;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.06);
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255,255,255,0.05);
     min-width: 68px;
-    transition: all 0.3s;
+    transition: all 0.3s var(--easing);
+    cursor: pointer;
+    background: rgba(255,255,255,0.02);
+  }
+  .gesture-card:hover {
+    background: rgba(139,92,246,0.08);
+    border-color: rgba(139,92,246,0.25);
   }
   .gesture-card .icon { font-size: 20px; margin-bottom: 2px; display: block; }
-  .gesture-card .name { font-size: 9px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
+  .gesture-card .name { font-size: 9px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; font-weight: 500; }
   .gesture-card .desc { font-size: 8px; color: var(--muted); margin-top: 2px; opacity: 0.6; }
   .gesture-card.active {
     border-color: var(--accent);
-    background: rgba(124,92,224,0.15);
-    box-shadow: 0 0 12px var(--glow);
+    background: rgba(139,92,246,0.15);
+    box-shadow: 0 0 20px var(--glow-purple);
+    transform: translateY(-2px);
   }
   .gesture-card.active .name { color: var(--accent2); }
 
@@ -335,20 +429,21 @@
     bottom: 120px;
     left: 50%;
     transform: translateX(-50%);
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border: none;
+    background: linear-gradient(135deg, var(--accent), #7C3AED);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 30px;
     color: #fff;
-    padding: 10px 28px;
-    font-size: 12px;
-    font-family: 'Courier New', monospace;
+    padding: 12px 32px;
+    font-size: 13px;
+    font-family: var(--font-body);
+    font-weight: 500;
     letter-spacing: 2px;
     cursor: pointer;
     z-index: 210;
     opacity: 0;
     pointer-events: none;
-    transition: all 0.4s;
-    box-shadow: 0 0 24px rgba(124,92,224,0.5);
+    transition: all 0.4s var(--easing);
+    box-shadow: 0 0 32px rgba(139,92,246,0.5), 0 4px 20px rgba(0,0,0,0.4);
     text-transform: uppercase;
   }
   #submit-btn.visible {
@@ -356,8 +451,9 @@
     pointer-events: auto;
   }
   #submit-btn:hover {
-    box-shadow: 0 0 36px rgba(196,78,255,0.7);
+    box-shadow: 0 0 48px rgba(167,139,250,0.7), 0 4px 24px rgba(0,0,0,0.5);
     transform: translateX(-50%) scale(1.05);
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
   }
   #submit-btn:active {
     transform: translateX(-50%) scale(0.95);
@@ -367,13 +463,14 @@
   #result-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(5,5,10,0.92);
+    background: rgba(5,5,12,0.94);
     z-index: 500;
     display: none;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     overflow-y: auto;
     padding: 40px 20px;
   }
@@ -382,120 +479,155 @@
   #result-close {
     position: fixed;
     top: 16px; right: 20px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    color: var(--text);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-secondary);
     width: 40px; height: 40px;
     border-radius: 50%;
     font-size: 18px;
     cursor: pointer;
     z-index: 510;
-    transition: all 0.3s;
+    transition: all 0.3s var(--easing);
+    font-family: var(--font-body);
   }
   #result-close:hover {
-    background: rgba(255,68,68,0.3);
+    background: rgba(255,68,68,0.15);
     border-color: var(--red);
+    color: var(--red);
   }
 
   #result-title {
-    font-size: 16px;
-    letter-spacing: 4px;
+    font-family: var(--font-heading);
+    font-size: 20px;
+    letter-spacing: 6px;
     text-transform: uppercase;
     color: var(--accent2);
-    margin-bottom: 24px;
+    margin-bottom: 28px;
     text-align: center;
+    text-shadow: 0 0 30px rgba(167,139,250,0.4);
   }
 
   #result-cards {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 20px;
     justify-content: center;
-    margin-bottom: 28px;
+    margin-bottom: 32px;
   }
 
   .result-card {
-    width: 120px;
-    padding: 16px 12px;
-    border-radius: 12px;
-    border: 1.5px solid rgba(0,255,200,0.3);
-    background: linear-gradient(160deg, #1a2a2e, #162028);
-    box-shadow: 0 0 20px rgba(0,255,200,0.15);
+    width: 130px;
+    padding: 20px 14px;
+    border-radius: var(--radius);
+    border: 1.5px solid rgba(0,229,255,0.3);
+    background: linear-gradient(160deg, rgba(0,229,255,0.1), rgba(0,229,255,0.02));
+    box-shadow: 0 0 24px var(--glow-cyan), 0 4px 20px rgba(0,0,0,0.4);
     text-align: center;
+    backdrop-filter: blur(4px);
   }
-  .result-card .rc-symbol { font-size: 28px; color: var(--accent3); margin-bottom: 8px; }
-  .result-card .rc-name { font-size: 11px; letter-spacing: 2px; color: var(--accent3); margin-bottom: 6px; text-transform: uppercase; }
-  .result-card .rc-meaning { font-size: 9px; color: var(--muted); line-height: 1.5; }
+  .result-card .rc-symbol { font-size: 28px; color: var(--accent3); margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(0,229,255,0.4)); }
+  .result-card .rc-name { font-size: 11px; letter-spacing: 2px; color: var(--accent3); margin-bottom: 8px; text-transform: uppercase; font-weight: 600; }
+  .result-card .rc-meaning { font-size: 9px; color: var(--text-secondary); line-height: 1.5; }
 
   #result-reading {
-    max-width: 520px;
-    background: rgba(124,92,224,0.08);
-    border: 1px solid rgba(124,92,224,0.2);
-    border-radius: 12px;
-    padding: 20px 24px;
+    max-width: 560px;
+    width: 100%;
+    background: rgba(21,21,48,0.7);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
     text-align: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
   #result-reading .rr-label {
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: var(--accent);
-    margin-bottom: 12px;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: var(--accent2);
+    margin-bottom: 16px;
     text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(167,139,250,0.3);
   }
   #result-reading .rr-text {
-    font-size: 12px;
-    line-height: 1.8;
+    font-size: 13px;
+    line-height: 1.9;
     color: var(--text);
+    text-align: left;
+  }
+  #result-reading .rr-text p { margin: 0 0 12px; }
+  #result-reading .rr-text strong { color: var(--gold); font-weight: 600; }
+  #result-reading .rr-text hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  #result-reading .rr-text .rr-h2 { font-family: var(--font-heading); font-size: 16px; color: var(--accent2); letter-spacing: 3px; margin: 16px 0 10px; text-align: center; }
+  #result-reading .rr-text .rr-h3 { font-size: 14px; color: var(--accent); letter-spacing: 2px; margin: 14px 0 8px; font-weight: 600; }
+  /* 加载动画 */
+  .rr-loading { color: var(--accent2); font-style: italic; }
+  .rr-dots::after {
+    content: '';
+    animation: dots 1.4s steps(4, end) infinite;
+  }
+  @keyframes dots {
+    0%   { content: ''; }
+    25%  { content: '.'; }
+    50%  { content: '..'; }
+    75%  { content: '...'; }
+    100% { content: ''; }
   }
   #result-reading .rr-actions {
-    margin-top: 16px;
+    margin-top: 20px;
     display: flex;
-    gap: 12px;
+    gap: 14px;
     justify-content: center;
   }
   #result-reading .rr-btn {
-    background: rgba(124,92,224,0.2);
-    border: 1px solid var(--accent);
+    background: rgba(139,92,246,0.15);
+    border: 1px solid var(--border-active);
     color: var(--text);
-    padding: 8px 18px;
-    border-radius: 20px;
+    padding: 10px 22px;
+    border-radius: 24px;
     cursor: pointer;
-    font-family: 'Courier New', monospace;
-    font-size: 10px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
     letter-spacing: 1px;
-    transition: all 0.3s;
+    transition: all 0.3s var(--easing);
   }
   #result-reading .rr-btn:hover {
     background: var(--accent);
     color: #fff;
+    box-shadow: 0 0 20px var(--glow-purple);
   }
 
   /* ========== 帮助面板 ========== */
   #help-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(5,5,10,0.88);
+    background: rgba(5,5,12,0.9);
     z-index: 400;
     display: none;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
   }
   #help-overlay.show { display: flex; }
 
   #help-panel {
-    background: rgba(18,18,26,0.95);
-    border: 1px solid rgba(124,92,224,0.3);
-    border-radius: 14px;
-    padding: 28px 32px;
-    max-width: 420px;
-    box-shadow: 0 0 40px rgba(0,0,0,0.6);
+    background: rgba(21,21,48,0.95);
+    border: 1px solid var(--border-active);
+    border-radius: var(--radius-lg);
+    padding: 32px 36px;
+    max-width: 440px;
+    box-shadow: 0 0 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(139,92,246,0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
   #help-panel h2 {
-    font-size: 12px;
-    letter-spacing: 3px;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    letter-spacing: 4px;
     color: var(--accent2);
-    margin-bottom: 18px;
+    margin-bottom: 20px;
     text-align: center;
     text-transform: uppercase;
   }
@@ -503,34 +635,35 @@
     display: flex;
     justify-content: space-between;
     gap: 20px;
-    padding: 6px 0;
+    padding: 7px 0;
     font-size: 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
   }
   #help-panel .kb-key {
     color: var(--accent3);
-    background: rgba(0,255,200,0.08);
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-family: 'Courier New', monospace;
+    background: rgba(0,229,255,0.08);
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
   }
   #help-panel .kb-desc {
-    color: var(--muted);
+    color: var(--text-secondary);
   }
   #help-panel .kb-close {
     display: block;
-    margin: 16px auto 0;
+    margin: 20px auto 0;
     background: none;
-    border: 1px solid rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.1);
     color: var(--muted);
-    padding: 6px 16px;
-    border-radius: 16px;
+    padding: 8px 20px;
+    border-radius: 20px;
     cursor: pointer;
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-body);
     font-size: 10px;
     letter-spacing: 1px;
+    transition: all 0.3s;
   }
-  #help-panel .kb-close:hover { color: #fff; border-color: #fff; }
+  #help-panel .kb-close:hover { color: #fff; border-color: var(--accent); }
 
   /* ========== Toast ========== */
   #action-toast {
@@ -538,26 +671,29 @@
     top: 62px;
     left: 50%;
     transform: translateX(-50%) translateY(-16px);
-    background: rgba(18,18,26,0.95);
-    border: 1px solid var(--accent);
+    background: rgba(17,17,40,0.95);
+    border: 1px solid var(--border-active);
     color: var(--accent2);
-    padding: 8px 20px;
+    padding: 10px 24px;
     border-radius: 40px;
     font-size: 11px;
+    font-family: var(--font-body);
     letter-spacing: 2px;
     z-index: 300;
     opacity: 0;
     pointer-events: none;
-    transition: all 0.3s;
-    box-shadow: 0 0 20px var(--glow);
+    transition: all 0.35s var(--easing);
+    box-shadow: 0 0 28px var(--glow-purple), 0 4px 16px rgba(0,0,0,0.4);
     white-space: nowrap;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
   #action-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* ========== 加载 ========== */
   #loading {
     position: fixed; inset: 0;
-    background: var(--bg);
+    background: var(--bg-deep);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -567,20 +703,21 @@
   }
   #loading.hidden { opacity: 0; pointer-events: none; }
   .loader {
-    width: 40px; height: 40px;
-    border: 2px solid rgba(124,92,224,0.2);
-    border-top-color: var(--accent);
+    width: 44px; height: 44px;
+    border: 2px solid rgba(139,92,246,0.15);
+    border-top-color: var(--accent2);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 0 20px var(--glow-purple);
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  #loading-text { font-size: 11px; color: var(--muted); letter-spacing: 2px; }
+  #loading-text { font-size: 11px; color: var(--muted); letter-spacing: 3px; font-family: var(--font-body); }
 
   /* ========== 错误 ========== */
   #cam-error {
     position: fixed; inset: 0;
-    background: var(--bg);
+    background: var(--bg-deep);
     display: none;
     flex-direction: column;
     align-items: center;
@@ -590,35 +727,39 @@
     padding: 40px;
   }
   #cam-error .emoji { font-size: 40px; margin-bottom: 10px; }
-  #cam-error p { color: var(--muted); font-size: 11px; margin-top: 10px; max-width: 380px; line-height: 1.6; }
+  #cam-error p { color: var(--text-secondary); font-size: 12px; margin-top: 10px; max-width: 380px; line-height: 1.7; font-family: var(--font-body); }
   #cam-error button {
-    margin-top: 16px; padding: 8px 20px;
+    margin-top: 20px; padding: 10px 24px;
     background: var(--accent); border: none;
-    border-radius: 8px; color: white;
+    border-radius: 24px; color: white;
     cursor: pointer; letter-spacing: 1px;
-    font-family: inherit;
+    font-family: var(--font-body);
+    font-weight: 500;
+    transition: all 0.3s var(--easing);
+    box-shadow: 0 0 20px var(--glow-purple);
   }
-  #cam-error button:hover { background: var(--accent2); }
+  #cam-error button:hover { background: var(--accent2); box-shadow: 0 0 30px var(--glow-purple); }
 
   /* ========== Debug Panel ========== */
   #debug-panel {
     position: fixed;
     bottom: 80px;
     left: 14px;
-    background: rgba(0,0,0,0.85);
-    border: 1px solid rgba(124,92,224,0.5);
-    border-radius: 8px;
+    background: rgba(11,11,26,0.9);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
     padding: 10px 14px;
     font-size: 10px;
     color: #a0a0c0;
     z-index: 300;
     min-width: 200px;
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-mono);
     line-height: 1.6;
+    backdrop-filter: blur(8px);
   }
   #debug-panel .row { display: flex; gap: 8px; }
   #debug-panel .label { color: var(--muted); min-width: 80px; }
-  #debug-panel .value { color: var(--accent2); }
+  #debug-panel .value { color: var(--accent3); }
 
   /* ========== Mobile responsiveness ========== */
   @media (max-width: 768px) {
@@ -629,8 +770,8 @@
     .sel-card { width: 80px; height: 120px; }
     .sel-card .card-symbol { font-size: 22px; }
     .sel-card .card-name { font-size: 8px; }
-    #panel { gap: 8px; padding: 8px 12px; }
-    .gesture-card { min-width: 52px; padding: 5px 8px; }
+    #panel { gap: 8px; padding: 10px 14px; }
+    .gesture-card { min-width: 52px; padding: 6px 10px; }
     .gesture-card .icon { font-size: 16px; }
     .gesture-card .name { font-size: 7px; }
     .gesture-card .desc { font-size: 6px; }
@@ -638,6 +779,7 @@
     #submit-btn { bottom: 100px; }
     #debug-panel { bottom: 60px; left: 4px; padding: 6px 8px; font-size: 8px; min-width: 160px; }
     .result-card { width: 90px; padding: 12px 8px; }
+    header h1 { font-size: 12px; letter-spacing: 3px; }
   }
 
   @media (max-width: 480px) {
@@ -647,13 +789,15 @@
     .avail-card .card-meaning { font-size: 5px; }
     .sel-card { width: 66px; height: 98px; }
     .sel-card .card-symbol { font-size: 18px; }
-    #panel { gap: 4px; padding: 6px 8px; }
-    .gesture-card { min-width: 44px; padding: 4px 5px; }
+    #panel { gap: 4px; padding: 8px 10px; }
+    .gesture-card { min-width: 44px; padding: 4px 6px; }
     .gesture-card .icon { font-size: 14px; }
     .gesture-card .name { font-size: 6px; }
     .gesture-card .desc { display: none; }
     #available-scroll { padding: 8px 30px; gap: 8px; }
     #result-cards { gap: 8px; }
+    #submit-btn { bottom: 90px; padding: 10px 22px; font-size: 10px; }
+    #result-reading { padding: 16px 16px; }
   }
 </style>
 </head>
@@ -749,17 +893,17 @@
   <div class="gesture-card" id="gest-ok">
     <span class="icon">🤏</span>
     <div class="name">🤏 捏合 / 悬停</div>
-    <div class="desc">捏合选中 或 停留3秒</div>
+    <div class="desc">捏合选中 或 停留2秒</div>
   </div>
   <div class="gesture-card" id="gest-fist">
     <span class="icon">✊</span>
     <div class="name">✊ 握拳</div>
-    <div class="desc">握拳1.5秒清空已选</div>
+    <div class="desc">握拳0.5秒清空已选</div>
   </div>
   <div class="gesture-card" id="gest-submit">
     <span class="icon">🖐</span>
     <div class="name">🖐 张开手掌</div>
-    <div class="desc">张开2秒提交解读</div>
+    <div class="desc">张开0.6秒提交解读</div>
   </div>
 </div>
 
@@ -857,7 +1001,7 @@ let scrollStableFrames = 0;
 // 握拳持续帧数
 let fistHoldFrames = 0;
 
-// 悬停持续帧数 (3秒≈180帧)
+// 悬停持续帧数 (2秒≈120帧)
 let hoverHoldFrames = 0;
 let lastPointedCard = -1;
 
@@ -1292,12 +1436,12 @@ async function detectLoop() {
     const pinchDist = gestureResult.pinchDist;
     const avgOpen = gestureResult.avgOpen;
 
-    // 悬停计时器：手指持续指向同一张卡180帧≈3秒
+    // 悬停计时器：手指持续指向同一张卡120帧≈2秒
     if (hoveredIndex >= 0) {
       if (hoveredIndex === lastPointedCard) {
         hoverHoldFrames++;
-        updateHoverProgress(hoveredIndex, hoverHoldFrames / 180);
-        if (hoverHoldFrames >= 180 && !selectedIndices.has(hoveredIndex)) {
+        updateHoverProgress(hoveredIndex, hoverHoldFrames / 120);
+        if (hoverHoldFrames >= 120 && !selectedIndices.has(hoveredIndex)) {
           handleSelectCard(hoveredIndex);
           hoverHoldFrames = 0;
           updateHoverProgress(hoveredIndex, 0);
@@ -1307,7 +1451,7 @@ async function detectLoop() {
         if (lastPointedCard >= 0) updateHoverProgress(lastPointedCard, 0);
         lastPointedCard = hoveredIndex;
         hoverHoldFrames = 1;
-        updateHoverProgress(hoveredIndex, 1 / 180);
+        updateHoverProgress(hoveredIndex, 1 / 120);
       }
     } else {
       // 没有指向任何卡
@@ -1486,49 +1630,49 @@ function recognizeGesture(landmarks) {
 
   const avgOpen = fingerDist.reduce((a, b) => a + b, 0) / 5;
 
-  // 逐指状态: fingerDist < 0.25 → 弯曲, > 0.35 → 伸展
-  const thumbBent  = fingerDist[0] < 0.25;
-  const indexBent  = fingerDist[1] < 0.25;
-  const middleBent = fingerDist[2] < 0.28;
-  const ringBent   = fingerDist[3] < 0.28;
-  const pinkyBent  = fingerDist[4] < 0.28;
+  // 逐指状态: fingerDist < 0.32 → 弯曲, > 0.35 → 伸展 (放宽阈值，实际摄像头数据波动大)
+  const thumbBent  = fingerDist[0] < 0.32;
+  const indexBent  = fingerDist[1] < 0.32;
+  const middleBent = fingerDist[2] < 0.35;
+  const ringBent   = fingerDist[3] < 0.35;
+  const pinkyBent  = fingerDist[4] < 0.35;
 
-  const middleExt = fingerDist[2] > 0.32;
-  const ringExt   = fingerDist[3] > 0.32;
-  const pinkyExt  = fingerDist[4] > 0.32;
+  const middleExt = fingerDist[2] > 0.36;
+  const ringExt   = fingerDist[3] > 0.36;
+  const pinkyExt  = fingerDist[4] > 0.36;
 
   const bentCount = [thumbBent,indexBent,middleBent,ringBent,pinkyBent].filter(Boolean).length;
   const extCount = [middleExt,ringExt,pinkyExt].filter(Boolean).length;
 
-  // 1) 🤏 捏合: 拇指+食指向内弯曲靠拢，其余3指伸展（排除握拳误判）
-  if (pinchDist < 0.22 && thumbBent && indexBent && extCount >= 2) {
+  // 1) 🤏 捏合: 拇指+食指向内弯曲靠拢，其余3指伸展
+  if (pinchDist < 0.25 && thumbBent && indexBent && extCount >= 2) {
     fistHoldFrames = 0;
     openPalmFrames = 0;
     return { gesture: 'ok', pinchDist, avgOpen, fingerDist };
   }
 
-  // 2) ✊ 握拳: 5指全部弯曲
-  if (bentCount >= 4 && avgOpen < 0.25) {
+  // 2) ✊ 握拳: 3指以上弯曲即可，avgOpen宽松
+  if (bentCount >= 3 && avgOpen < 0.32) {
     fistHoldFrames++;
     openPalmFrames = 0;
-    if (fistHoldFrames >= 45) {
+    if (fistHoldFrames >= 30) {
       fistHoldFrames = 0;
       return { gesture: 'fist', pinchDist, avgOpen, fingerDist };
     }
     return { gesture: 'fist_holding', pinchDist, avgOpen, fingerDist };
   }
   // 逐渐衰减握拳计数
-  if (fistHoldFrames > 0 && bentCount < 3) fistHoldFrames = Math.max(0, fistHoldFrames - 2);
+  if (fistHoldFrames > 0 && bentCount < 2) fistHoldFrames = Math.max(0, fistHoldFrames - 3);
 
-  // 3) 🖐 张开手掌: 5指全部伸展
-  if (avgOpen > 0.38 && bentCount <= 1) {
+  // 3) 🖐 张开手掌: avgOpen放松 + 允许最多2指弯曲 (自然张开时小指/无名指可能微曲)
+  if (avgOpen > 0.28 && bentCount <= 2) {
     openPalmFrames++;
-    if (openPalmFrames >= 60) {
+    if (openPalmFrames >= 36) {
       openPalmFrames = 0;
       return { gesture: 'submit', pinchDist, avgOpen, fingerDist };
     }
   } else {
-    if (openPalmFrames > 0 && avgOpen < 0.34) openPalmFrames = Math.max(0, openPalmFrames - 2);
+    if (openPalmFrames > 0 && avgOpen < 0.24) openPalmFrames = Math.max(0, openPalmFrames - 3);
   }
 
   return { gesture: 'none', pinchDist, avgOpen, fingerDist };
@@ -1651,20 +1795,18 @@ function generateReading(indices) {
   const cards = [...indices].map(i => TAROT_CARDS[i]);
   const positions = ['过去', '现在', '未来', '阻碍', '结果', '建议', '环境', '内心', '期望', '基石'];
 
-  let reading = '';
+  let reading = '## 🔮 牌面解读\n\n';
   cards.forEach((card, i) => {
     const pos = positions[i] || `位置${i+1}`;
-    reading += `【${pos}】${card.name}（${card.symbol}）— ${card.meaning}\n\n`;
+    reading += `**【${pos}】${card.name}（${card.symbol}）** — ${card.meaning}\n\n`;
   });
 
-  // 综合解读
   const themes = cards.map(c => c.meaning.split('·')[0]);
   const names = cards.map(c => c.name).join('、');
 
-  reading += `━━━━━━━━━━━━━━━━━━━\n\n`;
-  reading += `综合解读：\n`;
-  reading += `你抽取了 ${cards.length} 张牌——${names}。\n\n`;
-  reading += `牌面主题围绕「${themes.join('」「')}」展开。`;
+  reading += '---\n\n';
+  reading += `**命运指引：**\n`;
+  reading += `你抽取了 ${cards.length} 张牌——${names}。牌面主题围绕「${themes.join('」「')}」展开。`;
 
   if (cards.length === 1) {
     reading += ` 这张牌是你当前状态的一面镜子，建议你深入体会牌面的象征含义，结合自己的处境做出判断。`;
@@ -1677,6 +1819,25 @@ function generateReading(indices) {
   reading += `\n\n命运之轮不停转动，当下的困惑终将消散。记住：塔罗是指引，而非宿命。你永远拥有选择的权利。`;
 
   return reading;
+}
+
+function renderMarkdown(text) {
+  // 简单 Markdown → HTML 转换
+  let html = text;
+  // 转义 HTML 特殊字符（除了我们生成的标签）
+  html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // 粗体 **text**
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  // 分隔线 --- 或 ***
+  html = html.replace(/^(---|\*\*\*)$/gm, '<hr>');
+  // ## 标题
+  html = html.replace(/^## (.+)$/gm, '<h3 class="rr-h3">$1</h3>');
+  // # 标题
+  html = html.replace(/^# (.+)$/gm, '<h2 class="rr-h2">$1</h2>');
+  // 换行
+  html = html.replace(/\n\n/g, '</p><p>');
+  html = html.replace(/\n/g, '<br>');
+  return '<p>' + html + '</p>';
 }
 
 function showInterpretation() {
@@ -1701,7 +1862,9 @@ function showInterpretation() {
   });
 
   overlay.classList.add('show');
-  readingEl.textContent = '🔮 AI解读中...';
+
+  // 显示加载动画
+  readingEl.innerHTML = '<span class="rr-loading">🔮 正在召唤AI解读<span class="rr-dots"></span></span>';
   showToast('✨ 正在召唤AI解读...');
 
   // 构建 prompt
@@ -1714,11 +1877,12 @@ function showInterpretation() {
 
 ${cardDescs}
 
-请用中文给出：
-1. 每张牌在对应位置的含义（2-3句话）
-2. 所有牌的综合解读（占卜结果）
+**格式要求**（请严格遵守，不添加多余内容）：
+首先写一行"## 🔮 综合解读"
+然后用**粗体**标出每张牌的名称，给出2-3句解读
+最后用"---"分隔，再写一段"**命运指引**："的总结
 
-风格要求：神秘、富有哲理、充满画面感，像一位真正的占卜师在解读命运。每张牌的解读控制在2-3句话。总共300-500字。`;
+总共控制在200-400字，不要用代码块，不要用表格。`;
 
   // 调用 MiniMax AI (通过 PHP 代理)
   fetch('/hand-gesture/proxy.php', {
@@ -1726,16 +1890,16 @@ ${cardDescs}
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       messages: [
-        { role: 'system', content: '你是一位神秘而睿智的塔罗占卜师，擅长解读命运。回答简洁有力，充满哲理。' },
+        { role: 'system', content: '你是一位神秘而睿智的塔罗占卜师，擅长解读命运。回答简洁有力，充满哲理。使用markdown格式组织内容但只使用最基本的粗体和标题。' },
         { role: 'user', content: prompt }
       ],
-      max_tokens: 1000
+      max_tokens: 1024
     })
   })
   .then(res => res.json())
   .then(data => {
     if (data.choices && data.choices[0] && data.choices[0].message) {
-      readingEl.textContent = data.choices[0].message.content;
+      readingEl.innerHTML = renderMarkdown(data.choices[0].message.content);
       showToast('✨ AI解读完成');
     } else if (data.error) {
       throw new Error(data.error);
@@ -1745,7 +1909,7 @@ ${cardDescs}
   })
   .catch(err => {
     console.warn('AI API failed, using local reading:', err);
-    readingEl.textContent = generateReading(selectedIndices);
+    readingEl.innerHTML = renderMarkdown(generateReading(selectedIndices));
     showToast('⚠ AI暂不可用，显示基础解读');
   });
 }
