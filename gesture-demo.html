@@ -3,42 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Divition — 手势塔罗占卜</title>
+<title>星辰低语 — 以手为引</title>
+<script src="gsap.min.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg-deep: #07070f;
-    --bg: #0B0B1A;
-    --bg-elevated: #111128;
-    --bg-card: #151530;
-    --bg-card-hover: #1C1C3A;
-    --accent: #8B5CF6;
-    --accent2: #A78BFA;
-    --accent3: #00E5FF;
-    --gold: #FBBF24;
-    --gold-dim: #B8860B;
-    --text: #F1F0F8;
-    --text-secondary: #B8B5C8;
-    --muted: #6B6880;
-    --glow-purple: rgba(139, 92, 246, 0.45);
-    --glow-cyan: rgba(0, 229, 255, 0.35);
-    --glow-gold: rgba(251, 191, 36, 0.3);
-    --border: rgba(139, 92, 246, 0.2);
-    --border-active: rgba(139, 92, 246, 0.5);
-    --red: #FF4444;
+    --bg-deep: #121418;
+    --bg: #121418;
+    --bg-elevated: #1A1814;
+    --bg-card: #1A1814;
+    --bg-card-hover: #252218;
+    --accent: #E8D5A3;
+    --accent2: #C4A96A;
+    --accent3: #2B4A46;
+    --gold: #E8D5A3;
+    --gold-dim: #C4A96A;
+    --text: #F5F2EB;
+    --text-secondary: rgba(245,242,235,0.85);
+    --muted: #8A9DA0;
+    --glow-gold: rgba(232,213,163,0.42);
+    --glow-purple: rgba(232,213,163,0.42);
+    --glow-cyan: rgba(60,100,95,0.33);
+    --border: rgba(232,213,163,0.17);
+    --border-active: rgba(232,213,163,0.42);
+    --red: #C45A3C;
     --radius-sm: 8px;
     --radius: 12px;
     --radius-lg: 16px;
-    --easing: cubic-bezier(0.16, 1, 0.3, 1);
-    --font-heading: Georgia, 'Times New Roman', 'Noto Serif SC', serif;
-    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --font-heading: "Noto Serif SC", "STKaiti", "PingFang SC", serif;
+    --font-body: "Noto Serif SC", "STKaiti", "PingFang SC", serif;
     --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
   }
 
   body {
-    background: radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.08) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 100%, rgba(0,229,255,0.04) 0%, transparent 50%),
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(18,20,24,0.85) 100%),
                 var(--bg-deep);
     color: var(--text);
     font-family: var(--font-body);
@@ -46,7 +46,7 @@
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.03em;
   }
 
   /* 背景星星粒子 */
@@ -55,19 +55,19 @@
     position: fixed;
     inset: 0;
     background-image:
-      radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.3), transparent),
-      radial-gradient(1px 1px at 20% 60%, rgba(255,255,255,0.2), transparent),
-      radial-gradient(1px 1px at 30% 10%, rgba(255,255,255,0.25), transparent),
-      radial-gradient(1px 1px at 45% 75%, rgba(255,255,255,0.15), transparent),
-      radial-gradient(1px 1px at 55% 30%, rgba(255,255,255,0.2), transparent),
-      radial-gradient(1px 1px at 65% 85%, rgba(255,255,255,0.18), transparent),
-      radial-gradient(1px 1px at 75% 15%, rgba(255,255,255,0.22), transparent),
-      radial-gradient(1px 1px at 85% 55%, rgba(255,255,255,0.15), transparent),
-      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.2), transparent),
-      radial-gradient(1px 1px at 15% 90%, rgba(255,255,255,0.18), transparent),
-      radial-gradient(1.5px 1.5px at 40% 45%, rgba(251,191,36,0.4), transparent),
-      radial-gradient(1.5px 1.5px at 70% 25%, rgba(139,92,246,0.35), transparent),
-      radial-gradient(1.5px 1.5px at 25% 50%, rgba(0,229,255,0.3), transparent);
+      radial-gradient(1px 1px at 10% 20%, rgba(245,242,235,0.42), transparent),
+      radial-gradient(1px 1px at 20% 60%, rgba(245,242,235,0.28), transparent),
+      radial-gradient(1px 1px at 30% 10%, rgba(245,242,235,0.35), transparent),
+      radial-gradient(1px 1px at 45% 75%, rgba(245,242,235,0.21), transparent),
+      radial-gradient(1px 1px at 55% 30%, rgba(245,242,235,0.28), transparent),
+      radial-gradient(1px 1px at 65% 85%, rgba(245,242,235,0.25), transparent),
+      radial-gradient(1px 1px at 75% 15%, rgba(245,242,235,0.31), transparent),
+      radial-gradient(1px 1px at 85% 55%, rgba(245,242,235,0.21), transparent),
+      radial-gradient(1px 1px at 90% 40%, rgba(245,242,235,0.28), transparent),
+      radial-gradient(1px 1px at 15% 90%, rgba(245,242,235,0.25), transparent),
+      radial-gradient(1.5px 1.5px at 40% 45%, rgba(232,213,163,0.56), transparent),
+      radial-gradient(1.5px 1.5px at 70% 25%, rgba(232,213,163,0.42), transparent),
+      radial-gradient(1.5px 1.5px at 25% 50%, rgba(60,100,95,0.45), transparent);
     pointer-events: none;
     z-index: 0;
     animation: twinkle 4s ease-in-out infinite alternate;
@@ -105,7 +105,7 @@
   #dim-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(7,7,15,0.4);
+    background: rgba(18,20,24,0.45);
     pointer-events: none;
   }
 
@@ -136,7 +136,7 @@
   }
 
   #available-label {
-    font-size: 10px;
+    font-size: 14px;
     letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--muted);
@@ -148,22 +148,22 @@
     font-weight: 500;
   }
   #sort-btn {
-    background: rgba(139,92,246,0.1);
+    background: rgba(232,213,163,0.14);
     border: 1px solid var(--border);
     color: var(--accent2);
     border-radius: 14px;
     padding: 4px 12px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 13px;
     font-family: var(--font-body);
     font-weight: 500;
     transition: all 0.3s var(--easing);
     pointer-events: auto;
   }
   #sort-btn:hover {
-    background: rgba(139,92,246,0.2);
+    background: rgba(232,213,163,0.28);
     border-color: var(--accent2);
-    box-shadow: 0 0 12px rgba(139,92,246,0.2);
+    box-shadow: 0 0 12px rgba(232,213,163,0.28);
   }
 
   .scroll-arrow {
@@ -171,7 +171,7 @@
     top: 50%;
     transform: translateY(-50%);
     font-size: 28px;
-    color: rgba(139,92,246,0.25);
+    color: rgba(232,213,163,0.35);
     transition: all 0.3s var(--easing);
     z-index: 20;
     pointer-events: none;
@@ -187,8 +187,8 @@
   #available-scroll {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 10px 60px 10px 60px;
+    gap: 16px;
+    padding: 16px 16px 16px 16px;
     overflow-x: auto;
     overflow-y: visible;
     scroll-behavior: smooth;
@@ -200,18 +200,17 @@
 
   .avail-card {
     flex-shrink: 0;
-    width: 88px;
-    height: 130px;
+    width: 200px;
+    height: 300px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
-    background: linear-gradient(160deg, #1A1A35, #141430);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
+    background: linear-gradient(160deg, #141210, #0F0E0C);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(232,213,163,0.04);
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: all 0.4s var(--easing);
+    justify-content: flex-end;
+    transition: all 0.6s var(--easing);
     cursor: pointer;
     scroll-snap-align: center;
     position: relative;
@@ -221,52 +220,72 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 0%, rgba(139,92,246,0.15), transparent 70%);
+    background: radial-gradient(circle at 50% 0%, rgba(232,213,163,0.17), transparent 70%);
     opacity: 0;
-    transition: opacity 0.4s;
+    transition: opacity 0.6s;
   }
   .avail-card:hover::before { opacity: 1; }
-  .avail-card .card-symbol { font-size: 22px; color: var(--accent2); opacity: 0.8; position: relative; z-index: 1; }
-  .avail-card .card-name { font-size: 9px; letter-spacing: 1.5px; color: var(--accent2); text-transform: uppercase; position: relative; z-index: 1; font-weight: 500; }
-  .avail-card .card-meaning { font-size: 7px; color: var(--muted); text-align: center; padding: 0 6px; line-height: 1.3; position: relative; z-index: 1; }
+  .avail-card img.card-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+    z-index: 0;
+  }
+  .avail-card .card-label {
+    position: absolute;
+    bottom: 4px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    z-index: 2;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    font-weight: 600;
+    pointer-events: none;
+  }
 
   /* 悬停进度条 */
   .avail-card .hover-progress-bar {
     position: absolute;
     bottom: 0; left: 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--accent), var(--accent3), var(--gold));
+    background: linear-gradient(90deg, var(--gold-dim), var(--gold), #D8D4C8);
     width: 0%;
-    transition: width 0.15s linear;
+    transition: width 0.2s linear;
     z-index: 5;
     border-radius: 0 2px 2px 0;
-    box-shadow: 0 0 8px rgba(0,229,255,0.5);
+    box-shadow: 0 0 8px rgba(232,213,163,0.56);
   }
 
   .avail-card.hovered {
-    border-color: var(--accent2);
-    box-shadow: 0 0 30px var(--glow-purple), 0 8px 30px rgba(0,0,0,0.6);
-    transform: translateY(-10px) scale(1.08);
-    background: linear-gradient(160deg, #1F1F40, #181838);
+    border-color: var(--gold);
+    box-shadow: 0 0 50px var(--glow-gold), 0 12px 40px rgba(0,0,0,0.7);
+    transform: translateY(-20px) scale(1.35);
+    background: linear-gradient(160deg, #1A1814, #141210);
   }
 
   .avail-card.selected-card {
-    border-color: rgba(0,229,255,0.5);
-    background: linear-gradient(160deg, rgba(0,229,255,0.08), rgba(0,229,255,0.03));
-    box-shadow: 0 0 20px var(--glow-cyan), inset 0 0 20px rgba(0,229,255,0.05);
+    border-color: rgba(232,213,163,0.70);
+    background: linear-gradient(160deg, rgba(232,213,163,0.11), rgba(232,213,163,0.04));
+    box-shadow: 0 0 20px var(--glow-gold), inset 0 0 20px rgba(232,213,163,0.07);
   }
   .avail-card.selected-card::after {
     content: '✓';
     position: absolute;
     top: 6px; right: 8px;
-    font-size: 10px;
-    color: var(--accent3);
+    font-size: 18px;
+    color: var(--gold);
     font-weight: 700;
+    z-index: 3;
   }
 
   #divider {
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), var(--accent3), transparent);
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--accent3), transparent);
     opacity: 0.25;
     flex-shrink: 0;
   }
@@ -280,21 +299,25 @@
   }
 
   #selected-label {
-    font-size: 10px;
+    font-size: 14px;
     letter-spacing: 3px;
     text-transform: uppercase;
-    color: var(--accent3);
+    color: var(--gold);
     padding: 12px 0 8px;
     z-index: 10;
     font-weight: 500;
-    text-shadow: 0 0 16px rgba(0,229,255,0.3);
+    text-shadow: 0 0 16px rgba(232,213,163,0.42);
+    padding: 12px 0 8px;
+    z-index: 10;
+    font-weight: 500;
+    text-shadow: 0 0 16px rgba(232,213,163,0.42);
   }
 
   #selected-scroll {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 8px 40px;
+    gap: 20px;
+    padding: 16px 50px;
     overflow-x: auto;
     overflow-y: visible;
     flex: 1;
@@ -304,37 +327,56 @@
 
   .sel-card {
     flex-shrink: 0;
-    width: 100px;
-    height: 145px;
+    width: 200px;
+    height: 290px;
     border-radius: var(--radius);
-    border: 1.5px solid var(--accent3);
-    background: linear-gradient(160deg, rgba(0,229,255,0.1), rgba(0,229,255,0.03));
-    box-shadow: 0 0 28px var(--glow-cyan), 0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
+    border: 1.5px solid var(--gold);
+    background: linear-gradient(160deg, rgba(232,213,163,0.14), rgba(232,213,163,0.04));
+    box-shadow: 0 0 28px var(--glow-gold), 0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(232,213,163,0.06);
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 7px;
-    transition: all 0.4s var(--easing);
+    justify-content: flex-end;
+    transition: all 0.6s var(--easing);
     animation: selFloat 3s ease-in-out infinite;
     position: relative;
     cursor: pointer;
+    overflow: hidden;
   }
   .sel-card::before {
     content: '';
     position: absolute;
     inset: -2px;
     border-radius: var(--radius);
-    background: linear-gradient(160deg, var(--accent3), transparent 60%, var(--gold));
+    background: linear-gradient(160deg, var(--gold), transparent 60%, var(--accent3));
     opacity: 0;
-    transition: opacity 0.4s;
+    transition: opacity 0.6s;
     z-index: -1;
     filter: blur(8px);
   }
   .sel-card:hover::before { opacity: 0.6; }
-  .sel-card .card-symbol { font-size: 26px; color: var(--accent3); filter: drop-shadow(0 0 10px rgba(0,229,255,0.6)); position: relative; z-index: 1; }
-  .sel-card .card-name { font-size: 10px; letter-spacing: 1.5px; color: var(--accent3); text-transform: uppercase; position: relative; z-index: 1; font-weight: 600; }
-  .sel-card .card-meaning { font-size: 7.5px; color: var(--text-secondary); text-align: center; padding: 0 8px; line-height: 1.3; position: relative; z-index: 1; }
+  .sel-card img.card-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+    z-index: 0;
+  }
+  .sel-card .card-label {
+    position: absolute;
+    bottom: 4px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    z-index: 2;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+    font-weight: 600;
+    pointer-events: none;
+  }
 
   @keyframes selFloat {
     0%,100% { transform: translateY(0) rotate(-1.5deg); }
@@ -345,7 +387,7 @@
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%,-50%);
-    font-size: 11px;
+    font-size: 16px;
     letter-spacing: 2px;
     color: var(--muted);
     opacity: 0.4;
@@ -356,8 +398,8 @@
   header {
     position: fixed;
     top: 0; left: 0; right: 0;
-    height: 48px;
-    background: rgba(11,11,26,0.88);
+    height: 64px;
+    background: rgba(18,20,24,0.88);
     border-bottom: 1px solid var(--border);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
@@ -369,15 +411,47 @@
   }
   header h1 {
     font-family: var(--font-heading);
-    font-size: 14px;
+    font-size: 18px;
     letter-spacing: 4px;
     text-transform: uppercase;
     color: var(--accent2);
     font-weight: 600;
-    text-shadow: 0 0 20px rgba(139,92,246,0.4);
+    text-shadow: 0 0 20px rgba(232,213,163,0.56);
   }
-  #gesture-label { font-size: 10px; color: var(--muted); font-family: var(--font-body); }
-  #gesture-label span { color: var(--accent3); }
+  #gesture-label { font-size: 13px; color: var(--muted); font-family: var(--font-body); }
+  #gesture-label span { color: var(--gold); }
+
+  /* ========== 背景音乐控制 ========== */
+  #bgm-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-secondary);
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s var(--easing);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  #bgm-btn:hover {
+    background: rgba(232,213,163,0.21);
+    border-color: var(--accent);
+    color: var(--accent2);
+    box-shadow: 0 0 12px var(--glow-purple);
+  }
+  #bgm-btn.playing {
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow: 0 0 12px var(--glow-gold);
+    animation: bgmPulse 2s ease-in-out infinite;
+  }
+  @keyframes bgmPulse {
+    0%,100% { box-shadow: 0 0 12px var(--glow-gold); }
+    50% { box-shadow: 0 0 20px var(--glow-gold), 0 0 6px rgba(232,213,163,0.70); }
+  }
 
   /* ========== 底部手势面板 ========== */
   #panel {
@@ -385,85 +459,49 @@
     bottom: 14px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(17,17,40,0.92);
+    background: rgba(26,24,20,0.92);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 12px 24px;
+    padding: 18px 32px;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     display: flex;
     gap: 12px;
     z-index: 200;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(139,92,246,0.08);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(232,213,163,0.11);
     flex-wrap: wrap;
     justify-content: center;
   }
   .gesture-card {
     text-align: center;
-    padding: 8px 14px;
+    padding: 14px 22px;
     border-radius: var(--radius-sm);
     border: 1px solid rgba(255,255,255,0.05);
-    min-width: 68px;
+    min-width: 90px;
     transition: all 0.3s var(--easing);
     cursor: pointer;
     background: rgba(255,255,255,0.02);
   }
   .gesture-card:hover {
-    background: rgba(139,92,246,0.08);
-    border-color: rgba(139,92,246,0.25);
+    background: rgba(232,213,163,0.11);
+    border-color: rgba(232,213,163,0.35);
   }
-  .gesture-card .icon { font-size: 20px; margin-bottom: 2px; display: block; }
-  .gesture-card .name { font-size: 9px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; font-weight: 500; }
-  .gesture-card .desc { font-size: 8px; color: var(--muted); margin-top: 2px; opacity: 0.6; }
+  .gesture-card .icon { font-size: 24px; margin-bottom: 2px; display: block; }
+  .gesture-card .name { font-size: 11px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; font-weight: 500; }
+  .gesture-card .desc { font-size: 10px; color: var(--muted); margin-top: 2px; opacity: 0.6; }
   .gesture-card.active {
     border-color: var(--accent);
-    background: rgba(139,92,246,0.15);
+    background: rgba(232,213,163,0.21);
     box-shadow: 0 0 20px var(--glow-purple);
     transform: translateY(-2px);
   }
   .gesture-card.active .name { color: var(--accent2); }
 
-  /* ========== Submit 按钮 ========== */
-  #submit-btn {
-    position: fixed;
-    bottom: 120px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg, var(--accent), #7C3AED);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 30px;
-    color: #fff;
-    padding: 12px 32px;
-    font-size: 13px;
-    font-family: var(--font-body);
-    font-weight: 500;
-    letter-spacing: 2px;
-    cursor: pointer;
-    z-index: 210;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.4s var(--easing);
-    box-shadow: 0 0 32px rgba(139,92,246,0.5), 0 4px 20px rgba(0,0,0,0.4);
-    text-transform: uppercase;
-  }
-  #submit-btn.visible {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  #submit-btn:hover {
-    box-shadow: 0 0 48px rgba(167,139,250,0.7), 0 4px 24px rgba(0,0,0,0.5);
-    transform: translateX(-50%) scale(1.05);
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-  }
-  #submit-btn:active {
-    transform: translateX(-50%) scale(0.95);
-  }
-
   /* ========== 结果弹窗 ========== */
   #result-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(5,5,12,0.94);
+    background: rgba(14,16,18,0.94);
     z-index: 500;
     display: none;
     flex-direction: column;
@@ -472,9 +510,9 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     overflow-y: auto;
-    padding: 40px 20px;
+    padding: 60px 30px;
   }
-  #result-overlay.show { display: flex; }
+  #result-overlay.show { display: flex; opacity: 1; }
 
   #result-close {
     position: fixed;
@@ -491,20 +529,20 @@
     font-family: var(--font-body);
   }
   #result-close:hover {
-    background: rgba(255,68,68,0.15);
+    background: rgba(196,90,60,0.15);
     border-color: var(--red);
     color: var(--red);
   }
 
   #result-title {
     font-family: var(--font-heading);
-    font-size: 20px;
+    font-size: 24px;
     letter-spacing: 6px;
     text-transform: uppercase;
     color: var(--accent2);
     margin-bottom: 28px;
     text-align: center;
-    text-shadow: 0 0 30px rgba(167,139,250,0.4);
+    text-shadow: 0 0 30px rgba(232,213,163,0.56);
   }
 
   #result-cards {
@@ -516,23 +554,23 @@
   }
 
   .result-card {
-    width: 130px;
-    padding: 20px 14px;
+    width: 240px;
+    padding: 28px 20px;
     border-radius: var(--radius);
-    border: 1.5px solid rgba(0,229,255,0.3);
-    background: linear-gradient(160deg, rgba(0,229,255,0.1), rgba(0,229,255,0.02));
+    border: 1.5px solid rgba(60,100,95,0.39);
+    background: linear-gradient(160deg, rgba(60,100,95,0.13), rgba(60,100,95,0.03));
     box-shadow: 0 0 24px var(--glow-cyan), 0 4px 20px rgba(0,0,0,0.4);
     text-align: center;
     backdrop-filter: blur(4px);
   }
-  .result-card .rc-symbol { font-size: 28px; color: var(--accent3); margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(0,229,255,0.4)); }
-  .result-card .rc-name { font-size: 11px; letter-spacing: 2px; color: var(--accent3); margin-bottom: 8px; text-transform: uppercase; font-weight: 600; }
-  .result-card .rc-meaning { font-size: 9px; color: var(--text-secondary); line-height: 1.5; }
+  .result-card .rc-symbol { font-size: 28px; color: var(--gold); margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(232,213,163,0.56)); }
+  .result-card .rc-name { font-size: 16px; letter-spacing: 2px; color: var(--gold); margin-bottom: 8px; text-transform: uppercase; font-weight: 600; }
+  .result-card .rc-meaning { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
 
   #result-reading {
-    max-width: 560px;
+    max-width: 800px;
     width: 100%;
-    background: rgba(21,21,48,0.7);
+    background: rgba(26,24,20,0.70);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 24px 28px;
@@ -542,15 +580,15 @@
   }
   #result-reading .rr-label {
     font-family: var(--font-heading);
-    font-size: 12px;
+    font-size: 24px;
     letter-spacing: 4px;
     color: var(--accent2);
     margin-bottom: 16px;
     text-transform: uppercase;
-    text-shadow: 0 0 20px rgba(167,139,250,0.3);
+    text-shadow: 0 0 20px rgba(232,213,163,0.42);
   }
   #result-reading .rr-text {
-    font-size: 13px;
+    font-size: 26px;
     line-height: 1.9;
     color: var(--text);
     text-align: left;
@@ -558,8 +596,8 @@
   #result-reading .rr-text p { margin: 0 0 12px; }
   #result-reading .rr-text strong { color: var(--gold); font-weight: 600; }
   #result-reading .rr-text hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
-  #result-reading .rr-text .rr-h2 { font-family: var(--font-heading); font-size: 16px; color: var(--accent2); letter-spacing: 3px; margin: 16px 0 10px; text-align: center; }
-  #result-reading .rr-text .rr-h3 { font-size: 14px; color: var(--accent); letter-spacing: 2px; margin: 14px 0 8px; font-weight: 600; }
+  #result-reading .rr-text .rr-h2 { font-family: var(--font-heading); font-size: 20px; color: var(--accent2); letter-spacing: 3px; margin: 16px 0 10px; text-align: center; }
+  #result-reading .rr-text .rr-h3 { font-size: 17px; color: var(--accent); letter-spacing: 2px; margin: 14px 0 8px; font-weight: 600; }
   /* 加载动画 */
   .rr-loading { color: var(--accent2); font-style: italic; }
   .rr-dots::after {
@@ -580,14 +618,14 @@
     justify-content: center;
   }
   #result-reading .rr-btn {
-    background: rgba(139,92,246,0.15);
+    background: rgba(232,213,163,0.21);
     border: 1px solid var(--border-active);
     color: var(--text);
     padding: 10px 22px;
     border-radius: 24px;
     cursor: pointer;
     font-family: var(--font-body);
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 500;
     letter-spacing: 1px;
     transition: all 0.3s var(--easing);
@@ -602,7 +640,7 @@
   #help-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(5,5,12,0.9);
+    background: rgba(14,16,18,0.90);
     z-index: 400;
     display: none;
     align-items: center;
@@ -613,18 +651,18 @@
   #help-overlay.show { display: flex; }
 
   #help-panel {
-    background: rgba(21,21,48,0.95);
+    background: rgba(26,24,20,0.95);
     border: 1px solid var(--border-active);
     border-radius: var(--radius-lg);
     padding: 32px 36px;
-    max-width: 440px;
-    box-shadow: 0 0 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(139,92,246,0.08);
+    max-width: 640px;
+    box-shadow: 0 0 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(232,213,163,0.11);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
   }
   #help-panel h2 {
     font-family: var(--font-heading);
-    font-size: 14px;
+    font-size: 18px;
     letter-spacing: 4px;
     color: var(--accent2);
     margin-bottom: 20px;
@@ -636,12 +674,12 @@
     justify-content: space-between;
     gap: 20px;
     padding: 7px 0;
-    font-size: 10px;
+    font-size: 13px;
     border-bottom: 1px solid rgba(255,255,255,0.03);
   }
   #help-panel .kb-key {
     color: var(--accent3);
-    background: rgba(0,229,255,0.08);
+    background: rgba(60,100,95,0.10);
     padding: 3px 10px;
     border-radius: 6px;
     font-family: var(--font-mono);
@@ -659,7 +697,7 @@
     border-radius: 20px;
     cursor: pointer;
     font-family: var(--font-body);
-    font-size: 10px;
+    font-size: 13px;
     letter-spacing: 1px;
     transition: all 0.3s;
   }
@@ -671,12 +709,12 @@
     top: 62px;
     left: 50%;
     transform: translateX(-50%) translateY(-16px);
-    background: rgba(17,17,40,0.95);
+    background: rgba(26,24,20,0.95);
     border: 1px solid var(--border-active);
     color: var(--accent2);
     padding: 10px 24px;
     border-radius: 40px;
-    font-size: 11px;
+    font-size: 14px;
     font-family: var(--font-body);
     letter-spacing: 2px;
     z-index: 300;
@@ -703,16 +741,16 @@
   }
   #loading.hidden { opacity: 0; pointer-events: none; }
   .loader {
-    width: 44px; height: 44px;
-    border: 2px solid rgba(139,92,246,0.15);
-    border-top-color: var(--accent2);
+    width: 64px; height: 64px;
+    border: 2px solid rgba(232,213,163,0.21);
+    border-top-color: var(--gold);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     margin-bottom: 16px;
-    box-shadow: 0 0 20px var(--glow-purple);
+    box-shadow: 0 0 20px var(--glow-gold);
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  #loading-text { font-size: 11px; color: var(--muted); letter-spacing: 3px; font-family: var(--font-body); }
+  #loading-text { font-size: 14px; color: var(--muted); letter-spacing: 3px; font-family: var(--font-body); }
 
   /* ========== 错误 ========== */
   #cam-error {
@@ -727,7 +765,7 @@
     padding: 40px;
   }
   #cam-error .emoji { font-size: 40px; margin-bottom: 10px; }
-  #cam-error p { color: var(--text-secondary); font-size: 12px; margin-top: 10px; max-width: 380px; line-height: 1.7; font-family: var(--font-body); }
+  #cam-error p { color: var(--text-secondary); font-size: 14px; margin-top: 10px; max-width: 380px; line-height: 1.7; font-family: var(--font-body); }
   #cam-error button {
     margin-top: 20px; padding: 10px 24px;
     background: var(--accent); border: none;
@@ -745,11 +783,11 @@
     position: fixed;
     bottom: 80px;
     left: 14px;
-    background: rgba(11,11,26,0.9);
+    background: rgba(18,20,24,0.90);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 10px 14px;
-    font-size: 10px;
+    font-size: 11px;
     color: #a0a0c0;
     z-index: 300;
     min-width: 200px;
@@ -763,41 +801,248 @@
 
   /* ========== Mobile responsiveness ========== */
   @media (max-width: 768px) {
-    .avail-card { width: 72px; height: 108px; }
+    .avail-card { width: 130px; height: 195px; }
     .avail-card .card-symbol { font-size: 18px; }
-    .avail-card .card-name { font-size: 7px; }
-    .avail-card .card-meaning { font-size: 6px; }
-    .sel-card { width: 80px; height: 120px; }
+    .avail-card .card-name { font-size: 11px; }
+    .avail-card .card-meaning { font-size: 10px; }
+    .sel-card { width: 120px; height: 175px; }
     .sel-card .card-symbol { font-size: 22px; }
-    .sel-card .card-name { font-size: 8px; }
+    .sel-card .card-name { font-size: 12px; }
     #panel { gap: 8px; padding: 10px 14px; }
     .gesture-card { min-width: 52px; padding: 6px 10px; }
     .gesture-card .icon { font-size: 16px; }
-    .gesture-card .name { font-size: 7px; }
-    .gesture-card .desc { font-size: 6px; }
-    #available-scroll { padding: 10px 40px; gap: 10px; }
-    #submit-btn { bottom: 100px; }
-    #debug-panel { bottom: 60px; left: 4px; padding: 6px 8px; font-size: 8px; min-width: 160px; }
+    .gesture-card .name { font-size: 10px; }
+    .gesture-card .desc { font-size: 9px; }
+    #available-scroll { padding: 10px 14px; gap: 8px; }
+    #debug-panel { bottom: 60px; left: 4px; padding: 6px 8px; font-size: 9px; min-width: 160px; }
     .result-card { width: 90px; padding: 12px 8px; }
-    header h1 { font-size: 12px; letter-spacing: 3px; }
+    header h1 { font-size: 18px; letter-spacing: 3px; }
   }
 
   @media (max-width: 480px) {
-    .avail-card { width: 60px; height: 92px; }
+    .avail-card { width: 100px; height: 150px; }
     .avail-card .card-symbol { font-size: 15px; }
-    .avail-card .card-name { font-size: 6px; }
-    .avail-card .card-meaning { font-size: 5px; }
-    .sel-card { width: 66px; height: 98px; }
+    .avail-card .card-name { font-size: 10px; }
+    .avail-card .card-meaning { font-size: 8px; }
+    .sel-card { width: 95px; height: 142px; }
     .sel-card .card-symbol { font-size: 18px; }
+    .sel-card .card-name { font-size: 11px; }
     #panel { gap: 4px; padding: 8px 10px; }
     .gesture-card { min-width: 44px; padding: 4px 6px; }
     .gesture-card .icon { font-size: 14px; }
-    .gesture-card .name { font-size: 6px; }
+    .gesture-card .name { font-size: 10px; }
     .gesture-card .desc { display: none; }
-    #available-scroll { padding: 8px 30px; gap: 8px; }
+    #available-scroll { padding: 8px 10px; gap: 6px; }
     #result-cards { gap: 8px; }
-    #submit-btn { bottom: 90px; padding: 10px 22px; font-size: 10px; }
     #result-reading { padding: 16px 16px; }
+  }
+  /* ========== Intro Overlay ========== */
+  #intro-overlay {
+    position: fixed; inset: 0;
+    background: #0B0D10;
+    z-index: 1100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s ease;
+    overflow: hidden;
+  }
+  #intro-overlay.hidden { opacity: 0; pointer-events: none; }
+
+  .intro-deco-left, .intro-deco-right {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 80px;
+    background-size: contain;
+    background-repeat: repeat-y;
+    background-position: center;
+    opacity: 0.06;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .intro-deco-left {
+    left: 10px;
+    background-image: url(assets/decoration/icon_01.png);
+  }
+  .intro-deco-right {
+    right: 10px;
+    background-image: url(assets/decoration/icon_05.png);
+  }
+  #intro-stars { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .intro-cosmic-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 300px; height: 300px; background: radial-gradient(circle, rgba(232,213,163,0.11) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: 1; animation: cosmicPulse 4s ease-in-out infinite; }
+  @keyframes cosmicPulse { 0%,100% { opacity:0.4; transform: translate(-50%,-50%) scale(1); } 50% { opacity:0.8; transform: translate(-50%,-50%) scale(1.3); } }
+  #intro-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    padding: 40px 30px;
+    max-width: 420px;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  #intro-content.fade-out { opacity: 0; transform: translateY(-20px); }
+  #intro-content.fade-in { opacity: 1; transform: translateY(0); }
+  .intro-title {
+    font-family: "Noto Serif SC", "STKaiti", serif;
+    font-size: 42px;
+    letter-spacing: 0.3em;
+    color: #F5F2EB;
+    text-shadow: 0 0 40px rgba(232,213,163,0.42), 0 2px 4px rgba(0,0,0,0.5);
+    margin-bottom: 16px;
+  }
+  .intro-sub {
+    font-family: "Noto Serif SC", "STKaiti", serif;
+    font-size: 16px;
+    letter-spacing: 0.2em;
+    color: #E8D5A3;
+    opacity: 0.7;
+    animation: breathe 4s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%,100% { opacity: 0.5; }
+    50% { opacity: 0.9; }
+  }
+  .intro-deco {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    margin: 24px 0;
+  }
+  .intro-deco-line {
+    height: 1px; width: 48px;
+    background: linear-gradient(to right, transparent, rgba(232,213,163,0.42));
+  }
+  .intro-deco-line.right {
+    background: linear-gradient(to left, transparent, rgba(232,213,163,0.42));
+  }
+  .intro-deco-dot {
+    width: 6px; height: 6px;
+    background: rgba(232,213,163,0.56);
+    transform: rotate(45deg);
+  }
+  .intro-story-title {
+    font-family: "Noto Serif SC", "STKaiti", serif;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    color: rgba(232,213,163,0.7);
+    margin-bottom: 20px;
+  }
+  .intro-story-text {
+    font-family: "Noto Serif SC", "STKaiti", serif;
+    font-size: 18px;
+    line-height: 2;
+    letter-spacing: 0.08em;
+    color: rgba(245,242,235,1.00);
+    white-space: pre-line;
+    margin-bottom: 28px;
+  }
+  .intro-source {
+    font-family: "Noto Serif SC", "STKaiti", serif;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    color: rgba(138,157,160,0.5);
+    font-style: italic;
+  }
+  .intro-name-label {
+    font-family: "Noto Serif SC", "STKaiti", serif;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    color: rgba(232,213,163,0.7);
+    margin-bottom: 16px;
+  }
+  .intro-name-input {
+    width: 200px;
+    padding: 12px 16px;
+    background: rgba(26,24,20,0.80);
+    border: 0.5px solid rgba(232,213,163,0.28);
+    border-radius: 8px;
+    color: #F5F2EB;
+    font-family: "Noto Serif SC", "STKaiti", serif;
+    font-size: 16px;
+    letter-spacing: 0.1em;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .intro-name-input:focus {
+    border-color: rgba(232,213,163,0.7);
+    box-shadow: 0 0 12px rgba(232,213,163,0.14);
+  }
+  .intro-name-input::placeholder {
+    color: rgba(138,157,160,0.5);
+  }
+  .intro-btn {
+    margin-top: 24px;
+    padding: 14px 40px;
+    background: transparent;
+    border: 1px solid rgba(232,213,163,0.42);
+    border-radius: 28px;
+    color: #E8D5A3;
+    font-family: "Noto Serif SC", "STKaiti", serif;
+    font-size: 15px;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    transition: all 0.6s ease;
+  }
+  .intro-btn:hover {
+    background: rgba(232,213,163,0.11);
+    border-color: rgba(232,213,163,0.70);
+    box-shadow: 0 0 20px rgba(232,213,163,0.21);
+  }
+  .intro-btn:active { transform: scale(0.98); }
+  #intro-dots {
+    position: absolute;
+    bottom: 100px;
+    left: 0; right: 0;
+    display: flex; justify-content: center; gap: 10px;
+    z-index: 3;
+  }
+  .intro-dot {
+    height: 6px; border-radius: 3px;
+    transition: all 0.5s ease;
+    background: rgba(94,107,110,0.2);
+    width: 6px;
+  }
+  .intro-dot.active {
+    width: 18px;
+    background: #B89A63;
+  }
+  .intro-dot.visited { background: rgba(232,213,163,0.42); }
+  #intro-hint {
+    position: absolute;
+    bottom: 60px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: rgba(138,157,160,0.5);
+    z-index: 3;
+    animation: breathe 3s ease-in-out infinite;
+  }
+
+  /* ========== Ceremony Animation ========== */
+  #ceremony-overlay {
+    position: fixed; inset: 0;
+    background: #0B0D10;
+    z-index: 1050;
+    display: none;
+  }
+  #ceremony-canvas { width: 100%; height: 100%; }
+
+  /* ========== Result destiny title ========== */
+  #result-destiny-title {
+    font-family: "Noto Serif SC", "STKaiti", serif;
+    font-size: 28px;
+    letter-spacing: 0.2em;
+    color: #F5F2EB;
+    text-shadow: 0 0 30px rgba(232,213,163,0.42);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  #result-destiny-subtitle {
+    font-family: "Noto Serif SC", "STKaiti", serif;
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    color: rgba(232,213,163,0.7);
+    margin-bottom: 24px;
+    text-align: center;
   }
 </style>
 </head>
@@ -806,6 +1051,22 @@
 <div id="loading">
   <div class="loader"></div>
   <p id="loading-text">加载中...</p>
+</div>
+
+<!-- ===== Intro Overlay ===== -->
+<div id="intro-overlay">
+  <canvas id="intro-stars"></canvas>
+  <div class="intro-cosmic-glow"></div>
+  <div class="intro-deco-left"></div>
+  <div class="intro-deco-right"></div>
+  <div id="intro-content"></div>
+  <div id="intro-dots"></div>
+  <div id="intro-hint">点击继续</div>
+</div>
+
+<!-- ===== Ceremony Overlay ===== -->
+<div id="ceremony-overlay">
+  <canvas id="ceremony-canvas"></canvas>
 </div>
 
 <div id="cam-error">
@@ -819,7 +1080,9 @@
 <!-- ===== 结果弹窗 ===== -->
 <div id="result-overlay">
   <button id="result-close" title="关闭 (Esc)">✕</button>
-  <div id="result-title">✨ 占卜结果 ✨</div>
+  <div id="result-title">命轨解读</div>
+  <div id="result-destiny-title"></div>
+  <div id="result-destiny-subtitle">你的命轨之名</div>
   <div id="result-cards"></div>
   <div id="result-reading">
     <div class="rr-label">综合解读</div>
@@ -841,6 +1104,7 @@
     <div class="kb-row"><span class="kb-key">Escape</span><span class="kb-desc">清空已选 / 关闭弹窗</span></div>
     <div class="kb-row"><span class="kb-key">S</span><span class="kb-desc">提交并查看解读</span></div>
     <div class="kb-row"><span class="kb-key">?</span><span class="kb-desc">显示/隐藏此帮助</span></div>
+    <div class="kb-row"><span class="kb-key">M</span><span class="kb-desc">播放/暂停背景音乐</span></div>
     <div class="kb-row"><span class="kb-key">点击牌</span><span class="kb-desc">鼠标点击选中/取消</span></div>
     <button class="kb-close" id="kb-close">关闭</button>
   </div>
@@ -873,11 +1137,12 @@
 </div>
 
 <header>
-  <h1>Divition</h1>
+  <h1>星辰低语</h1>
   <div id="gesture-label">手势：<span id="current-gesture">—</span> | <span id="mode-label">等待中</span></div>
+  <button id="bgm-btn" title="背景音乐 (M)">♪</button>
 </header>
 
-<button id="submit-btn">✦ 提交解读 ✦</button>
+<audio id="bgm" loop preload="auto" src="https://single-az-1251416377.cos.ap-guangzhou.myqcloud.com/hand-gesture/bgm_xinghe.mp3"></audio>
 
 <div id="panel">
   <div class="gesture-card" id="gest-left">
@@ -893,37 +1158,46 @@
   <div class="gesture-card" id="gest-ok">
     <span class="icon">🤏</span>
     <div class="name">🤏 捏合 / 悬停</div>
-    <div class="desc">捏合选中 或 停留2秒</div>
+    <div class="desc">捏合保持2秒 / 悬停1.5秒自动选</div>
   </div>
   <div class="gesture-card" id="gest-fist">
     <span class="icon">✊</span>
     <div class="name">✊ 握拳</div>
-    <div class="desc">握拳0.5秒清空已选</div>
+    <div class="desc">握拳保持5秒清空已选</div>
   </div>
   <div class="gesture-card" id="gest-submit">
     <span class="icon">🖐</span>
     <div class="name">🖐 张开手掌</div>
-    <div class="desc">张开0.6秒提交解读</div>
+    <div class="desc">张开手掌3秒提交 / 点击提交</div>
   </div>
 </div>
 
 <!-- Debug Panel -->
 <div id="debug-panel">
   <div class="row"><span class="label">pinchDist</span><span class="value" id="dbg-pinch">—</span></div>
-  <div class="row"><span class="label">avgOpen</span><span class="value" id="dbg-avgopen">—</span></div>
-  <div class="row"><span class="label">fingerDist[0]</span><span class="value" id="dbg-finger0">—</span></div>
-  <div class="row"><span class="label">hoveredIndex</span><span class="value" id="dbg-hovered">—</span></div>
-  <div class="row"><span class="label">lastHovered</span><span class="value" id="dbg-lasthover">—</span></div>
+  <div class="row"><span class="label">yDelta×100</span><span class="value" id="dbg-ydeltas">—</span></div>
   <div class="row"><span class="label">gesture</span><span class="value" id="dbg-gesture">—</span></div>
-  <div class="row"><span class="label">scrollDir</span><span class="value" id="dbg-scrolldir">—</span></div>
+  <div class="row"><span class="label">hoverIdx</span><span class="value" id="dbg-hovered">—</span></div>
   <div class="row"><span class="label">hoverHold</span><span class="value" id="dbg-hoverhold">—</span></div>
+  <div class="row"><span class="label">pinchHold</span><span class="value" id="dbg-pinchhold">—</span></div>
   <div class="row"><span class="label">fistHold</span><span class="value" id="dbg-fistframes">—</span></div>
   <div class="row"><span class="label">openPalm</span><span class="value" id="dbg-openpalm">—</span></div>
-  <div class="row"><span class="label">indexTip</span><span class="value" id="dbg-indextip">—</span></div>
+  <div class="row"><span class="label">idxTip</span><span class="value" id="dbg-indextip">—</span></div>
 </div>
 
 <script type="module">
 import { HandLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.17/+esm';
+
+// ----- COS 静态资源配置 (本地开发用相对路径，部署后走COS) -----
+const COS_BASE = location.hostname === 'localhost' || location.hostname === '127.0.0.1'
+  ? '' : 'https://cos.tuteng3.site/hand-gesture';
+function cos(path) { return COS_BASE ? COS_BASE + '/' + path : path; }
+
+// GSAP safety — no-op fallback if GSAP fails to load
+if (typeof gsap === 'undefined') {
+  window.gsap = { to() {}, fromTo() {}, from() {}, set() {}, timeline() { return { to() {}, fromTo() {}, from() {}, set() {}, add() {}, then() {} }; } };
+  console.warn('GSAP not loaded, animations disabled');
+}
 
 // ----- 骨节连接 -----
 const HAND_CONNECTIONS = [
@@ -937,44 +1211,67 @@ const HAND_CONNECTIONS = [
 const FINGER_TIPS = [4, 8, 12, 16, 20];
 const FINGER_PIPS = [3, 6, 10, 14, 18];
 
-// ----- 塔罗牌数据（36张）-----
-const TAROT_CARDS = [
-  { name:'愚者',    symbol:'0',  meaning:'新的开始·无限可能' },
-  { name:'魔术师', symbol:'I',  meaning:'意志·工具·创造力' },
-  { name:'女祭司', symbol:'II', meaning:'直觉·神秘·内在智慧' },
-  { name:'女皇',   symbol:'III',meaning:'丰饶·母性·自然' },
-  { name:'皇帝',   symbol:'IV', meaning:'权威·秩序·父亲形象' },
-  { name:'教皇',   symbol:'V',  meaning:'信仰·传统·精神导师' },
-  { name:'恋人',   symbol:'VI', meaning:'选择·关系·爱与美' },
-  { name:'战车',   symbol:'VII',meaning:'意志力·胜利·控制' },
-  { name:'力量',   symbol:'VIII',meaning:'勇气·耐心·内在力量' },
-  { name:'隐士',   symbol:'IX', meaning:'内省·独处·寻求真理' },
-  { name:'命运轮', symbol:'X',  meaning:'命运·转折·机遇' },
-  { name:'正义',   symbol:'XI', meaning:'公正·诚实·因果' },
-  { name:'吊人',   symbol:'XII',meaning:'牺牲·换位·等待' },
-  { name:'死神',   symbol:'XIII',meaning:'转变·结束·重生' },
-  { name:'节制',   symbol:'XIV',meaning:'平衡·调节·中庸' },
-  { name:'恶魔',   symbol:'XV', meaning:'束缚·欲望·物质' },
-  { name:'塔',     symbol:'XVI',meaning:'破坏·觉醒·意外' },
-  { name:'星',     symbol:'XVII',meaning:'希望·灵感·新方向' },
-  { name:'月',     symbol:'XVIII',meaning:'错觉·不安·潜意识' },
-  { name:'太阳',   symbol:'XIX', meaning:'快乐·活力·成功' },
-  { name:'审判',   symbol:'XX', meaning:'复苏·重启·宽恕' },
-  { name:'世界',   symbol:'XXI', meaning:'完成·循环·成就感' },
-  { name:'权杖Ace',symbol:'A♠', meaning:'创造力·新计划·热情' },
-  { name:'权杖II', symbol:'2♠', meaning:'冒险·决定·旅行' },
-  { name:'权杖III',symbol:'3♠', meaning:'成长·扩张·自信' },
-  { name:'圣杯Ace',symbol:'A♥', meaning:'情感·新关系·同情' },
-  { name:'圣杯II', symbol:'2♥', meaning:'伙伴·选择·吸引' },
-  { name:'圣杯III',symbol:'3♥', meaning:'合作·欢庆·创意' },
-  { name:'宝剑Ace',symbol:'A♣', meaning:'新想法·冲突·清晰' },
-  { name:'宝剑II', symbol:'2♣', meaning:'困境·僵局·决策' },
-  { name:'宝剑III',symbol:'3♣', meaning:'悲伤·失落·分离' },
-  { name:'星币Ace',symbol:'A◆', meaning:'新机会·物质·健康' },
-  { name:'星币II', symbol:'2◆', meaning:'选择·多向·平衡' },
-  { name:'星币III',symbol:'3◆', meaning:'技能·努力·团队' },
-  { name:'星币IV', symbol:'4◆', meaning:'安全·保守·坚持' },
-  { name:'星币V',  symbol:'5◆', meaning:'贫穷·孤独·危机' },
+// ----- 世界观 -----
+const WORLDVIEW = {
+  title: '星辰低语',
+  subtitle: '以手为引',
+  worldName: '星辰低语',
+  playerTitle: '星语者',
+  slogan: '命运并非被预言，而是在触碰中被重新书写',
+  lorePages: [
+    {
+      title: '序章 · 星寂',
+      text: '在所有文明诞生之前，\n星辰曾经历过一次「大沉寂」。\n二十余枚星脉古符散落人间，\n每一枚都封印着一个世界的低语。',
+      source: '— 星辰古卷所载'
+    },
+    {
+      title: '星辰秘录',
+      text: '它们并非凡物。\n每一枚古符都是星辰坠落时\n凝聚的最后一缕光。\n而你——被选中触碰它们的人，\n将在低语中听见命运的乐章。',
+      source: '— 星语者手记 · 其三'
+    }
+  ],
+  destinyTitles: [
+    '《坠入长夜的燃灯者》',
+    '《被风带走名字的人》',
+    '《掌纹深处的寻路人》',
+    '《星脉低语中的聆听者》',
+    '《归墟彼岸的守望者》',
+    '《混沌边缘的命名者》',
+    '《逆流而上的寻光者》',
+    '《永恒瞬间的见证者》',
+    '《沉默符纹间的独语者》',
+    '《轮回尽头的新生者》',
+  ]
+};
+
+// ----- 星脉古符数据（26枚）-----
+const RUNE_CARDS = [
+  { id:1,  name:'生', meaning:'生命与起源', element:'木', polarity:'yang' },
+  { id:2,  name:'灭', meaning:'终结与轮回', element:'火', polarity:'yin' },
+  { id:3,  name:'连', meaning:'连接与羁绊', element:'木', polarity:'yang' },
+  { id:4,  name:'孤', meaning:'独处与内省', element:'金', polarity:'yin' },
+  { id:5,  name:'欲', meaning:'欲望与驱动', element:'火', polarity:'yang' },
+  { id:6,  name:'轮', meaning:'轮回与因果', element:'土', polarity:'yin' },
+  { id:7,  name:'时', meaning:'时间与流转', element:'水', polarity:'yang' },
+  { id:8,  name:'情', meaning:'情感与感知', element:'水', polarity:'yin' },
+  { id:9,  name:'序', meaning:'秩序与规则', element:'金', polarity:'yang' },
+  { id:10, name:'沌', meaning:'混沌与可能', element:'水', polarity:'yin' },
+  { id:11, name:'痕', meaning:'痕迹与记忆', element:'土', polarity:'yin' },
+  { id:12, name:'寂', meaning:'寂静与归空', element:'金', polarity:'yin' },
+  { id:13, name:'燃', meaning:'燃烧与觉醒', element:'火', polarity:'yang' },
+  { id:14, name:'凝', meaning:'凝聚与意志', element:'水', polarity:'yin' },
+  { id:15, name:'流', meaning:'流转与变迁', element:'水', polarity:'yang' },
+  { id:16, name:'触', meaning:'触碰与联结', element:'木', polarity:'yang' },
+  { id:17, name:'视', meaning:'洞见与真相', element:'火', polarity:'yang' },
+  { id:18, name:'念', meaning:'信念与执念', element:'土', polarity:'yin' },
+  { id:19, name:'纹', meaning:'纹路与轨迹', element:'土', polarity:'yin' },
+  { id:20, name:'墟', meaning:'废墟与重建', element:'土', polarity:'yin' },
+  { id:21, name:'镜', meaning:'镜像与自省', element:'金', polarity:'yin' },
+  { id:22, name:'绊', meaning:'牵绊与因果', element:'木', polarity:'yin' },
+  { id:23, name:'执', meaning:'执着与坚守', element:'金', polarity:'yang' },
+  { id:24, name:'续', meaning:'延续与传承', element:'木', polarity:'yang' },
+  { id:25, name:'陨', meaning:'陨落与重生', element:'火', polarity:'yin' },
+  { id:26, name:'渊', meaning:'深渊与压力', element:'水', polarity:'yin' },
 ];
 
 // ----- 状态 -----
@@ -988,7 +1285,6 @@ let lastGesture = 'none';
 let scrollCooldown = 0;
 
 // 手势防抖 (触后冷却帧数)
-let okDebounce = 0;
 let fistDebounce = 0;
 let submitDebounce = 0;
 
@@ -1001,11 +1297,14 @@ let scrollStableFrames = 0;
 // 握拳持续帧数
 let fistHoldFrames = 0;
 
-// 悬停持续帧数 (2秒≈120帧)
+// 悬停选中持续帧数 (90帧≈1.5秒)
 let hoverHoldFrames = 0;
 let lastPointedCard = -1;
 
-// 张开手掌持续帧数 (2秒≈120帧)
+// 捏合选中持续帧数 (180帧≈3秒)
+let pinchHoldFrames = 0;
+
+// 张开手掌持续帧数
 let openPalmFrames = 0;
 
 // 键盘输入的hover索引
@@ -1013,24 +1312,18 @@ let kbHoverIndex = -1;
 
 // 排序模式: 0=默认, 1=大阿尔卡纳优先, 2=随机洗牌
 let sortMode = 0;
-let cardOrder = [...Array(TAROT_CARDS.length).keys()]; // displayIndex → originalIndex
+let cardOrder = [...Array(RUNE_CARDS.length).keys()]; // displayIndex → originalIndex
 
 function cycleSortMode() {
-  sortMode = (sortMode + 1) % 3;
-  const labels = ['默认', '大牌优先', '随机洗牌'];
-  const icons = ['📋', '✨', '🎲'];
+  sortMode = (sortMode + 1) % 2;
+  const labels = ['默认', '随机洗牌'];
+  const icons = ['📋', '🎲'];
   document.getElementById('sort-btn').textContent = icons[sortMode];
 
   if (sortMode === 0) {
-    cardOrder = [...Array(TAROT_CARDS.length).keys()];
+    cardOrder = [...Array(RUNE_CARDS.length).keys()];
   } else if (sortMode === 1) {
-    // 大阿尔卡纳 (0-21) 优先，然后小牌 (22-35)
-    const major = [...Array(22).keys()];
-    const minor = [...Array(TAROT_CARDS.length - 22).keys()].map(i => i + 22);
-    cardOrder = [...major, ...minor];
-  } else if (sortMode === 2) {
-    // Fisher-Yates 随机洗牌
-    cardOrder = [...Array(TAROT_CARDS.length).keys()];
+    cardOrder = [...Array(RUNE_CARDS.length).keys()];
     for (let i = cardOrder.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [cardOrder[i], cardOrder[j]] = [cardOrder[j], cardOrder[i]];
@@ -1059,7 +1352,7 @@ async function init() {
       numHands: 2,
       runningMode: 'VIDEO',
       baseOptions: {
-        modelAssetPath: 'hand_landmarker.task',
+        modelAssetPath: 'https://single-az-1251416377.cos.ap-guangzhou.myqcloud.com/vibe-motion/hand_landmarker.task',
         minHandDetectionConfidence: 0.4,
         minHandPresenceConfidence: 0.4,
         minTrackingConfidence: 0.4,
@@ -1067,46 +1360,108 @@ async function init() {
     });
     console.log('[init] HandLandmarker created:', !!landmarker);
 
-    setLoadingText('启动摄像头...');
+    // 模型加载完毕，立即渲染UI，不等摄像头
     video = document.getElementById('video');
     skeletonCanvas = document.getElementById('skeleton-canvas');
     skCtx = skeletonCanvas.getContext('2d');
-
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'user', width:{ ideal:1280 }, height:{ ideal:720 } }
-    });
-    console.log('[init] camera stream got');
-    video.srcObject = stream;
-    await video.play();
-    console.log('[init] video playing, readyState:', video.readyState);
-
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
-
     renderAvailableCards();
     setupEventListeners();
     hideLoading();
+    tryAutoplayBGM();
+
+    setLoadingText('启动摄像头...');
+
+    // 微信内置浏览器不支持 getUserMedia，提示用户在浏览器中打开
+    const isWeChat = /micromessenger/i.test(navigator.userAgent);
+    const isMobile = /iphone|ipad|android/i.test(navigator.userAgent);
+    if (isWeChat) throw new Error('WECHAT_BROWSER');
+
+    // 检查 mediaDevices 支持
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      throw new Error('NOT_SUPPORTED');
+    }
+
+    // 摄像头获取函数，带超时 (15秒)
+    async function getCameraStream(constraints) {
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('TIMEOUT')), 15000)
+      );
+      return Promise.race([
+        navigator.mediaDevices.getUserMedia(constraints),
+        timeout
+      ]);
+    }
+
+    // 尝试逐级降级约束
+    const constraintLevels = isMobile
+      ? [
+          { video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } },
+          { video: { facingMode: 'user', width: { ideal: 320 }, height: { ideal: 240 } } },
+          { video: true },
+        ]
+      : [
+          { video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } } },
+          { video: { facingMode: 'user' } },
+          { video: true },
+        ];
+
+    let stream = null;
+    let lastErr = null;
+    for (let level = 0; level < constraintLevels.length; level++) {
+      try {
+        console.log('[init] trying camera level', level);
+        stream = await getCameraStream(constraintLevels[level]);
+        console.log('[init] camera stream got at level', level);
+        break;
+      } catch (err) {
+        lastErr = err;
+        console.warn('[init] camera level', level, 'failed:', err.message || err.name);
+        if (err.message === 'TIMEOUT') throw new Error('CAMERA_TIMEOUT');
+        // 权限错误不重试
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') throw err;
+      }
+    }
+    if (!stream) throw lastErr || new Error('CAMERA_FAILED');
+
+    video.srcObject = stream;
+    video.setAttribute('playsinline', '');
+    await video.play();
+    console.log('[init] video playing, readyState:', video.readyState);
+
+    // UI already rendered above; just start detection loop
     requestAnimationFrame(detectLoop);
 
-  } catch (e) {
-    console.error(e);
-    hideLoading();
-    let msg = '摄像头初始化失败';
-    if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
-      msg = '摄像头权限被拒绝。请在浏览器地址栏左侧允许摄像头访问后重试。';
+	  } catch (e) {
+	    console.error(e);
+	    hideLoading();
+	    let msg = '摄像头初始化失败';
+    if (e.message === 'WECHAT_BROWSER') {
+      msg = '检测到微信内置浏览器，请点击右上角 ··· 选择「在浏览器打开」。微信浏览器不支持摄像头调用。';
+    } else if (e.message === 'NOT_SUPPORTED') {
+      msg = '当前浏览器不支持摄像头调用。请使用 Chrome、Safari 或 Edge 的最新版本。';
+    } else if (e.message === 'CAMERA_TIMEOUT') {
+      msg = '摄像头请求超时。请检查浏览器是否弹出权限提示，点击「允许」后刷新页面。';
+    } else if (e.message === 'CAMERA_FAILED') {
+      msg = '摄像头启动失败。请确认设备已连接摄像头并在系统设置中授权。';
+    } else if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+      msg = '摄像头权限被拒绝。请在浏览器设置中允许摄像头访问后重试。';
     } else if (e.name === 'NotFoundError' || e.name === 'DevicesNotFoundError') {
-      msg = '未找到摄像头。请确认设备已连接。';
+      msg = '未找到摄像头。请确认设备已连接并授予权限。';
     } else if (e.name === 'NotReadableError' || e.name === 'TrackStartError') {
       msg = '摄像头被其他应用占用。请关闭其他使用摄像头的程序后重试。';
+    } else if (e.name === 'OverconstrainedError') {
+      msg = '摄像头不支持当前分辨率设置。请尝试刷新页面。';
     } else {
       msg = e.message || String(e);
     }
     document.getElementById('cam-error-msg').textContent = msg;
     document.getElementById('cam-error').style.display = 'flex';
-  }
-}
+	  }
+	}
 
-function setLoadingText(t) {
+	function setLoadingText(t) {
   const el = document.getElementById('loading-text');
   if (el) el.textContent = t;
 }
@@ -1130,11 +1485,6 @@ function resizeCanvas() {
 // ============================================================
 
 function setupEventListeners() {
-  // 提交按钮
-  document.getElementById('submit-btn').addEventListener('click', () => {
-    if (selectedIndices.size > 0) showInterpretation();
-  });
-
   // 结果弹窗关闭
   document.getElementById('result-close').addEventListener('click', closeInterpretation);
   document.getElementById('rr-close').addEventListener('click', closeInterpretation);
@@ -1172,6 +1522,12 @@ function setupEventListeners() {
   // 排序按钮
   document.getElementById('sort-btn').addEventListener('click', cycleSortMode);
 
+  // 背景音乐控制
+  const bgmBtn = document.getElementById('bgm-btn');
+  const bgm = document.getElementById('bgm');
+  bgm.volume = 0.35;
+  bgmBtn.addEventListener('click', toggleBGM);
+
   // 底部手势卡片点击模拟
   document.getElementById('gest-ok').addEventListener('click', () => {
     const idx = lastHoveredValid ? lastHoveredIndex : (hoveredIndex >= 0 ? hoveredIndex : 0);
@@ -1183,8 +1539,7 @@ function setupEventListeners() {
       showToast('✊ 已清空全部');
       refreshAvailableCards();
       renderSelectedCards();
-      updateSubmitBtn();
-    }
+          }
   });
   document.getElementById('gest-submit').addEventListener('click', () => {
     if (selectedIndices.size > 0) showInterpretation();
@@ -1225,7 +1580,7 @@ function handleKeyboard(e) {
       e.preventDefault();
       doScroll(1);
       if (kbHoverIndex < 0) kbHoverIndex = 0;
-      kbHoverIndex = Math.min(TAROT_CARDS.length - 1, kbHoverIndex + 3);
+      kbHoverIndex = Math.min(RUNE_CARDS.length - 1, kbHoverIndex + 3);
       updateHoverCard(kbHoverIndex);
       break;
     case 'Enter':
@@ -1245,8 +1600,7 @@ function handleKeyboard(e) {
         showToast('✊ 已清空全部已选牌');
         refreshAvailableCards();
         renderSelectedCards();
-        updateSubmitBtn();
-      }
+              }
       break;
     case 's':
     case 'S':
@@ -1256,6 +1610,11 @@ function handleKeyboard(e) {
     case '?':
       e.preventDefault();
       toggleHelp();
+      break;
+    case 'm':
+    case 'M':
+      e.preventDefault();
+      toggleBGM();
       break;
   }
 }
@@ -1270,38 +1629,87 @@ function removeLastSelected() {
   if (selectedIndices.size === 0) return;
   const last = [...selectedIndices].pop();
   selectedIndices.delete(last);
-  showToast(`移除：${TAROT_CARDS[last].name}（剩余${selectedIndices.size}张）`);
+  showToast(`移除：${RUNE_CARDS[last].name}（剩余${selectedIndices.size}张）`);
   refreshAvailableCards();
   renderSelectedCards();
-  updateSubmitBtn();
-}
+  }
 
 function toggleHelp() {
   const overlay = document.getElementById('help-overlay');
   overlay.classList.toggle('show');
 }
 
+function toggleBGM() {
+  const bgm = document.getElementById('bgm');
+  const btn = document.getElementById('bgm-btn');
+  bgm.volume = 0.35;
+  if (bgm.paused) {
+    bgm.play().then(() => {
+      btn.classList.add('playing');
+      btn.textContent = '♫';
+    }).catch(err => {
+      console.warn('BGM play failed:', err);
+    });
+  } else {
+    bgm.pause();
+    btn.classList.remove('playing');
+    btn.textContent = '♪';
+  }
+}
+
+function tryAutoplayBGM() {
+  const bgm = document.getElementById('bgm');
+  const btn = document.getElementById('bgm-btn');
+  bgm.volume = 0.35;
+  bgm.play().then(() => {
+    btn.classList.add('playing');
+    btn.textContent = '♫';
+  }).catch(() => {
+    const startOnInteraction = () => {
+      bgm.play().then(() => {
+        btn.classList.add('playing');
+        btn.textContent = '♫';
+      }).catch(() => {});
+      document.removeEventListener('click', startOnInteraction);
+      document.removeEventListener('touchstart', startOnInteraction);
+    };
+    document.addEventListener('click', startOnInteraction, { once: true });
+    document.addEventListener('touchstart', startOnInteraction, { once: true });
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !bgm.paused) bgm.play().catch(() => {});
+  });
+}
+
 // ============================================================
 // 渲染
 // ============================================================
+
+function getCardFacePath(card) {
+  // 使用 assets/front 中的卡牌正面 (10张循环)
+  const num = String((card.id % 10) + 1).padStart(2, '0');
+  return cos(`assets/front/card_front_${num}.png`);
+}
+
+function getCardBackPath(idx) {
+  return cos('assets/back/logo_card_back.png');
+}
 
 function renderAvailableCards() {
   const scroll = document.getElementById('available-scroll');
   scroll.innerHTML = '';
   cardOrder.forEach((idx) => {
-    const card = TAROT_CARDS[idx];
+    const card = RUNE_CARDS[idx];
     const c = document.createElement('div');
     c.className = 'avail-card';
     c.id = 'avail-card-' + idx;
     if (selectedIndices.has(idx)) c.classList.add('selected-card');
     if (idx === hoveredIndex) c.classList.add('hovered');
     c.innerHTML = `
-      <div class="card-symbol">${card.symbol}</div>
-      <div class="card-name">${card.name}</div>
-      <div class="card-meaning">${card.meaning}</div>
+      <img class="card-img" src="${getCardFacePath(card)}" alt="${card.name}">
+      <div class="card-label">${card.name}</div>
       <div class="hover-progress-bar"></div>
     `;
-    // 鼠标点击选中/取消
     c.addEventListener('click', (ev) => {
       ev.stopPropagation();
       if (selectedIndices.has(idx)) {
@@ -1309,12 +1717,10 @@ function renderAvailableCards() {
         showToast(`移除：${card.name}`);
         refreshAvailableCards();
         renderSelectedCards();
-        updateSubmitBtn();
-      } else {
+              } else {
         handleSelectCard(idx);
       }
     });
-    // 右键直接移除
     c.addEventListener('contextmenu', (ev) => {
       ev.preventDefault();
       ev.stopPropagation();
@@ -1323,11 +1729,29 @@ function renderAvailableCards() {
         showToast(`移除：${card.name}`);
         refreshAvailableCards();
         renderSelectedCards();
-        updateSubmitBtn();
+              }
+    });
+
+    // GSAP hover effects
+    c.addEventListener('mouseenter', () => {
+      if (!c.classList.contains('selected-card')) {
+        gsap.to(c, { y: -20, scale: 1.35, borderColor: 'rgba(232,213,163,1.00)', boxShadow: '0 0 30px rgba(232,213,163,0.42), 0 8px 30px rgba(0,0,0,0.6)', duration: 0.3, ease: 'power2.out' });
       }
     });
+    c.addEventListener('mouseleave', () => {
+      if (!c.classList.contains('hovered') && !c.classList.contains('selected-card')) {
+        gsap.to(c, { y: 0, scale: 1, borderColor: 'rgba(232,213,163,0.17)', boxShadow: '0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(232,213,163,0.04)', duration: 0.3, ease: 'power2.out' });
+      }
+    });
+
     scroll.appendChild(c);
   });
+
+  // GSAP stagger entrance for available cards
+  gsap.fromTo('.avail-card',
+    { y: 60, opacity: 0, scale: 0.85 },
+    { y: 0, opacity: 1, scale: 1, duration: 0.6, stagger: 0.03, ease: 'back.out(1.4)', clearProps: 'all' }
+  );
 }
 
 function refreshAvailableCards() {
@@ -1339,12 +1763,10 @@ function refreshAvailableCards() {
 
 function renderSelectedCards() {
   const scroll = document.getElementById('selected-scroll');
-  // 先保存 sel-empty 引用，因为 innerHTML = '' 会把它也清掉
   const emptyEl = document.getElementById('sel-empty');
   scroll.innerHTML = '';
 
   if (selectedIndices.size === 0) {
-    // 重新插入空状态提示
     const empty = document.createElement('div');
     empty.id = 'sel-empty';
     empty.textContent = '暂无选中的牌';
@@ -1354,25 +1776,20 @@ function renderSelectedCards() {
 
   let offset = 0;
   selectedIndices.forEach(idx => {
-    const card = TAROT_CARDS[idx];
+    const card = RUNE_CARDS[idx];
     const c = document.createElement('div');
     c.className = 'sel-card';
-    c.style.animationDelay = `${offset * 0.15}s`;
     c.innerHTML = `
-      <div class="card-symbol">${card.symbol}</div>
-      <div class="card-name">${card.name}</div>
-      <div class="card-meaning">${card.meaning}</div>
+      <img class="card-img" src="${getCardFacePath(card)}" alt="${card.name}">
+      <div class="card-label">${card.name}</div>
     `;
-    // 点击已选牌可移除
     c.addEventListener('click', (ev) => {
       ev.stopPropagation();
       selectedIndices.delete(idx);
       showToast(`移除：${card.name}（剩余${selectedIndices.size}张）`);
       refreshAvailableCards();
       renderSelectedCards();
-      updateSubmitBtn();
-    });
-    // 右键也可移除
+          });
     c.addEventListener('contextmenu', (ev) => {
       ev.preventDefault();
       ev.stopPropagation();
@@ -1380,35 +1797,64 @@ function renderSelectedCards() {
       showToast(`移除：${card.name}（剩余${selectedIndices.size}张）`);
       refreshAvailableCards();
       renderSelectedCards();
-      updateSubmitBtn();
-    });
+          });
     scroll.appendChild(c);
     offset++;
   });
+
+  // GSAP stagger entrance for all selected cards
+  gsap.fromTo('.sel-card',
+    { scale: 0.3, opacity: 0, y: 30, rotationY: -90 },
+    { scale: 1, opacity: 1, y: 0, rotationY: 0, duration: 0.5, stagger: 0.08, ease: 'back.out(1.7)' }
+  );
+
+  // GSAP perpetual subtle float for selected cards
+  document.querySelectorAll('.sel-card').forEach((el, i) => {
+    gsap.to(el, {
+      y: -5,
+      rotation: 0.8 + Math.random() * 0.5,
+      duration: 2.5 + i * 0.4,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut',
+      delay: i * 0.25
+    });
+  });
 }
+
+  // GSAP perpetual subtle float for selected cards
+  document.querySelectorAll('.sel-card').forEach((el, i) => {
+    gsap.to(el, {
+      y: -5,
+      rotation: 0.8 + Math.random() * 0.5,
+      duration: 2.5 + i * 0.4,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut',
+      delay: i * 0.25
+    });
+  });
 
 function updateHoverCard(idx) {
   if (hoveredIndex === idx) return;
-  hoveredIndex = idx;
-  document.querySelectorAll('.avail-card').forEach((c, i) => {
-    c.classList.toggle('hovered', i === idx);
-  });
-  if (idx >= 0) {
-    const scrollEl = document.getElementById('available-scroll');
-    const cardEl = document.getElementById('avail-card-' + idx);
-    if (cardEl && scrollEl) {
-      cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  // Reset previous hovered card
+  if (hoveredIndex >= 0) {
+    const prev = document.getElementById('avail-card-' + hoveredIndex);
+    if (prev && !selectedIndices.has(hoveredIndex)) {
+      prev.classList.remove('hovered');
+      gsap.to(prev, { y: 0, scale: 1, borderColor: 'rgba(232,213,163,0.17)', boxShadow: '0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(232,213,163,0.04)', duration: 0.25, ease: 'power2.out' });
+    } else if (prev) {
+      prev.classList.remove('hovered');
     }
   }
-}
-
-function updateSubmitBtn() {
-  const btn = document.getElementById('submit-btn');
-  if (selectedIndices.size > 0) {
-    btn.classList.add('visible');
-    btn.textContent = `✦ 提交解读 (${selectedIndices.size}张) ✦`;
-  } else {
-    btn.classList.remove('visible');
+  hoveredIndex = idx;
+  if (idx >= 0) {
+    const el = document.getElementById('avail-card-' + idx);
+    if (el) {
+      el.classList.add('hovered');
+      gsap.to(el, { y: -20, scale: 1.35, borderColor: 'rgba(232,213,163,1.00)', boxShadow: '0 0 30px rgba(232,213,163,0.56), 0 8px 30px rgba(0,0,0,0.6)', duration: 0.25, ease: 'power2.out' });
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
   }
 }
 
@@ -1434,50 +1880,64 @@ async function detectLoop() {
     const gestureResult = recognizeGesture(lms);
     const gesture = gestureResult.gesture;
     const pinchDist = gestureResult.pinchDist;
-    const avgOpen = gestureResult.avgOpen;
+    const isPinching = gestureResult.isPinching || false;
 
-    // 悬停计时器：手指持续指向同一张卡120帧≈2秒
-    if (hoveredIndex >= 0) {
+    // 捏合保持计时器 — 捏住同一张卡120帧≈2秒即选中
+    if (isPinching && hoveredIndex >= 0 && !selectedIndices.has(hoveredIndex)) {
       if (hoveredIndex === lastPointedCard) {
-        hoverHoldFrames++;
-        updateHoverProgress(hoveredIndex, hoverHoldFrames / 120);
-        if (hoverHoldFrames >= 120 && !selectedIndices.has(hoveredIndex)) {
-          handleSelectCard(hoveredIndex);
-          hoverHoldFrames = 0;
-          updateHoverProgress(hoveredIndex, 0);
-        }
+        pinchHoldFrames++;
+        updateHoverProgress(hoveredIndex, pinchHoldFrames / 120, 'pinch');
       } else {
-        // 卡变了，重置
         if (lastPointedCard >= 0) updateHoverProgress(lastPointedCard, 0);
         lastPointedCard = hoveredIndex;
-        hoverHoldFrames = 1;
-        updateHoverProgress(hoveredIndex, 1 / 120);
+        pinchHoldFrames = Math.max(1, pinchHoldFrames);
+        updateHoverProgress(hoveredIndex, pinchHoldFrames / 120, 'pinch');
       }
-    } else {
-      // 没有指向任何卡
-      if (lastPointedCard >= 0) updateHoverProgress(lastPointedCard, 0);
+      if (pinchHoldFrames >= 120) {
+        handleSelectCard(hoveredIndex);
+        pinchHoldFrames = 0;
+        updateHoverProgress(hoveredIndex, 0);
+      }
+      // 捏合中 → 暂停悬停计时器
       hoverHoldFrames = 0;
-      lastPointedCard = -1;
+    } else {
+      // 悬停计时器 — 手指指向同一张卡90帧≈1.5秒 (仅在没捏合时)
+      if (hoveredIndex >= 0) {
+        if (hoveredIndex === lastPointedCard) {
+          hoverHoldFrames++;
+          updateHoverProgress(hoveredIndex, hoverHoldFrames / 90, 'hover');
+          if (hoverHoldFrames >= 90 && !selectedIndices.has(hoveredIndex)) {
+            handleSelectCard(hoveredIndex);
+            hoverHoldFrames = 0;
+            updateHoverProgress(hoveredIndex, 0);
+          }
+        } else {
+          if (lastPointedCard >= 0) updateHoverProgress(lastPointedCard, 0);
+          lastPointedCard = hoveredIndex;
+          hoverHoldFrames = 1;
+          updateHoverProgress(hoveredIndex, 1 / 90, 'hover');
+        }
+      } else {
+        if (lastPointedCard >= 0) updateHoverProgress(lastPointedCard, 0);
+        hoverHoldFrames = 0;
+        lastPointedCard = -1;
+      }
+      // 没在捏合 → 缓慢衰减（而非硬重置，-3帧避免偶尔检测丢失导致归零）
+      pinchHoldFrames = Math.max(0, pinchHoldFrames - 3);
     }
 
-    // 手势触发（ok/fist/submit 首次检测到即触发，带防抖）
-    if (gesture === 'ok') {
-      if (okDebounce <= 0) {
-        handleGesture('ok');
-        okDebounce = 40;
-      }
-    } else if (gesture === 'fist') {
+    // 手势触发（fist/submit 首次检测到即触发，带防抖）
+    if (gesture === 'fist') {
       if (fistDebounce <= 0) {
         handleGesture('fist');
-        fistDebounce = 60;
+        fistDebounce = 180;
       }
     } else if (gesture === 'submit') {
       if (submitDebounce <= 0) {
         handleGesture('submit');
-        submitDebounce = 90;
+        submitDebounce = 180;
       }
     }
-    if (okDebounce > 0) okDebounce--;
     if (fistDebounce > 0) fistDebounce--;
     if (submitDebounce > 0) submitDebounce--;
 
@@ -1488,21 +1948,14 @@ async function detectLoop() {
 
     updateUI(gesture);
 
-    // Debug 面板
-    const palmSize = Math.sqrt(
-      (lms[0].x - lms[9].x) ** 2 + (lms[0].y - lms[9].y) ** 2
-    );
-    const fingerDist0 = Math.sqrt(
-      (lms[4].x - lms[3].x) ** 2 + (lms[4].y - lms[3].y) ** 2
-    ) / palmSize;
+    // Debug 面板 — 显示指尖Y偏移 (tip.y - pip.y, 负=伸展在上, 正=弯曲在下)
+    const yDeltas = FINGER_JOINTS.map(j => Math.round((lms[j.tip].y - lms[j.pip].y) * 100));
     document.getElementById('dbg-pinch').textContent = pinchDist.toFixed(3);
-    document.getElementById('dbg-avgopen').textContent = avgOpen.toFixed(3);
-    document.getElementById('dbg-finger0').textContent = fingerDist0.toFixed(3);
-    document.getElementById('dbg-hovered').textContent = hoveredIndex;
-    document.getElementById('dbg-lasthover').textContent = lastHoveredValid ? lastHoveredIndex : '—';
+    document.getElementById('dbg-ydeltas').textContent = yDeltas.join(',');
     document.getElementById('dbg-gesture').textContent = gesture;
-    document.getElementById('dbg-scrolldir').textContent = scrollDir;
+    document.getElementById('dbg-hovered').textContent = hoveredIndex;
     document.getElementById('dbg-hoverhold').textContent = hoverHoldFrames;
+    document.getElementById('dbg-pinchhold').textContent = pinchHoldFrames;
     document.getElementById('dbg-fistframes').textContent = fistHoldFrames;
     document.getElementById('dbg-openpalm').textContent = openPalmFrames;
     document.getElementById('dbg-indextip').textContent = `${indexTip.x.toFixed(0)},${indexTip.y.toFixed(0)}`;
@@ -1513,16 +1966,18 @@ async function detectLoop() {
     scrollStableFrames = 0;
     fistHoldFrames = 0;
     hoverHoldFrames = 0;
+    pinchHoldFrames = 0;
     openPalmFrames = 0;
     if (lastPointedCard >= 0) updateHoverProgress(lastPointedCard, 0);
     lastPointedCard = -1;
     document.getElementById('scroll-left').classList.remove('active');
     document.getElementById('scroll-right').classList.remove('active');
-    document.getElementById('dbg-finger0').textContent = '—';
-    document.getElementById('dbg-hovered').textContent = '—';
+    document.getElementById('dbg-pinch').textContent = '—';
+    document.getElementById('dbg-ydeltas').textContent = '—';
     document.getElementById('dbg-gesture').textContent = '—';
-    document.getElementById('dbg-scrolldir').textContent = '—';
+    document.getElementById('dbg-hovered').textContent = '—';
     document.getElementById('dbg-hoverhold').textContent = '—';
+    document.getElementById('dbg-pinchhold').textContent = '—';
     document.getElementById('dbg-fistframes').textContent = '—';
     document.getElementById('dbg-openpalm').textContent = '—';
     document.getElementById('dbg-indextip').textContent = '—';
@@ -1607,83 +2062,101 @@ function updatePointingFromLandmark(landmarks) {
 }
 
 // ============================================================
-// 手势识别
+// 手势识别 — 基于关节角度 (旋转不变，比 tip-PIP 距离可靠得多)
 // ============================================================
 
+// 手指关节点索引: [mcp, pip, tip]  拇指结构不同，用 cmc-mcp-tip
+const FINGER_JOINTS = [
+  { mcp:2,  pip:3,  tip:4  }, // 拇指
+  { mcp:5,  pip:6,  tip:8  }, // 食指
+  { mcp:9,  pip:10, tip:12 }, // 中指
+  { mcp:13, pip:14, tip:16 }, // 无名指
+  { mcp:17, pip:18, tip:20 }, // 小指
+];
+
+function jointAngle(lm, a, b, c) {
+  // 以 b 为顶点，计算角 abc (向量 ba 和 bc 之间的夹角)
+  const ba = { x: lm[a].x - lm[b].x, y: lm[a].y - lm[b].y };
+  const bc = { x: lm[c].x - lm[b].x, y: lm[c].y - lm[b].y };
+  const dot = ba.x * bc.x + ba.y * bc.y;
+  const mag = Math.sqrt(ba.x*ba.x + ba.y*ba.y) * Math.sqrt(bc.x*bc.x + bc.y*bc.y);
+  if (mag < 1e-8) return Math.PI;
+  return Math.acos(Math.max(-1, Math.min(1, dot / mag)));
+}
+
 function recognizeGesture(landmarks) {
-  const palmSize = Math.sqrt(
+  const palm = Math.sqrt(
     (landmarks[0].x - landmarks[9].x) ** 2 +
     (landmarks[0].y - landmarks[9].y) ** 2
   );
-  if (palmSize < 0.001) return { gesture: 'none', pinchDist: 1, avgOpen: 1, fingerDist: [1,1,1,1,1] };
+  if (palm < 0.001) return { gesture: 'none', pinchDist: 1, angles: [0,0,0,0,0], isPinching: false };
 
-  const fingerDist = FINGER_TIPS.map((tip, i) => {
-    const dx = landmarks[tip].x - landmarks[FINGER_PIPS[i]].x;
-    const dy = landmarks[tip].y - landmarks[FINGER_PIPS[i]].y;
-    return Math.sqrt(dx*dx + dy*dy) / palmSize;
-  });
+  // 每根手指的 PIP 关节角度 (0~PI, 越大越直) — 仅用于调试面板
+  const angles = FINGER_JOINTS.map(j =>
+    jointAngle(landmarks, j.mcp, j.pip, j.tip)
+  );
 
+  // 拇指-食指捏合距离 (相对于手掌大小)
   const pinchDist = Math.sqrt(
     (landmarks[4].x - landmarks[8].x) ** 2 +
     (landmarks[4].y - landmarks[8].y) ** 2
-  ) / palmSize;
+  ) / palm;
 
-  const avgOpen = fingerDist.reduce((a, b) => a + b, 0) / 5;
+  // Y坐标法判断手指弯直 (指尖 vs PIP 关节的 Y 坐标)
+  // 图像坐标系 Y 向下 → tip.y < pip.y = 指尖在上方 = 伸展
+  //                       → tip.y > pip.y = 指尖在下方 = 弯曲
+  // ⚠️ 拇指(index 0)横向运动，Y比较对它无效 → 只判断食指~小指(index 1-4)
+  const yDeltas = FINGER_JOINTS.map(j => landmarks[j.tip].y - landmarks[j.pip].y);
+  // 握拳需要明显弯曲: Δy > 0.015 (约1.5%画面高度)，排除自然半弯的手指
+  const curled   = yDeltas.map(d => d > 0.015);
+  const extended = yDeltas.map(d => d < 0);
+  const curlCount4 = curled[1] + curled[2] + curled[3] + curled[4];
+  const extCount4  = extended[1] + extended[2] + extended[3] + extended[4];
 
-  // 逐指状态: fingerDist < 0.32 → 弯曲, > 0.35 → 伸展 (放宽阈值，实际摄像头数据波动大)
-  const thumbBent  = fingerDist[0] < 0.32;
-  const indexBent  = fingerDist[1] < 0.32;
-  const middleBent = fingerDist[2] < 0.35;
-  const ringBent   = fingerDist[3] < 0.35;
-  const pinkyBent  = fingerDist[4] < 0.35;
+  // 捏合检测: 仅看拇指+食指指尖距离 (捏合时其余手指自然弯曲，不检查它们)
+  const isPinching = pinchDist < 0.30;
 
-  const middleExt = fingerDist[2] > 0.36;
-  const ringExt   = fingerDist[3] > 0.36;
-  const pinkyExt  = fingerDist[4] > 0.36;
+  // 张掌排除: 至少3/4指伸展 → 不可能是握拳
+  const isOpenPalm = extCount4 >= 3;
 
-  const bentCount = [thumbBent,indexBent,middleBent,ringBent,pinkyBent].filter(Boolean).length;
-  const extCount = [middleExt,ringExt,pinkyExt].filter(Boolean).length;
-
-  // 1) 🤏 捏合: 拇指+食指向内弯曲靠拢，其余3指伸展
-  if (pinchDist < 0.25 && thumbBent && indexBent && extCount >= 2) {
-    fistHoldFrames = 0;
-    openPalmFrames = 0;
-    return { gesture: 'ok', pinchDist, avgOpen, fingerDist };
-  }
-
-  // 2) ✊ 握拳: 3指以上弯曲即可，avgOpen宽松
-  if (bentCount >= 3 && avgOpen < 0.32) {
+  // 优先级 1: ✊ 握拳 — 手指弯曲 + 拇指食指分开(非捏合) + 不是张掌
+  if (curlCount4 >= 4 && pinchDist > 0.35 && !isOpenPalm) {
     fistHoldFrames++;
     openPalmFrames = 0;
-    if (fistHoldFrames >= 30) {
+    if (fistHoldFrames >= 300) {  // 5秒 (60fps × 5)
       fistHoldFrames = 0;
-      return { gesture: 'fist', pinchDist, avgOpen, fingerDist };
+      return { gesture: 'fist', pinchDist, angles, isPinching: false };
     }
-    return { gesture: 'fist_holding', pinchDist, avgOpen, fingerDist };
+    return { gesture: 'fist_holding', pinchDist, angles, isPinching };
   }
-  // 逐渐衰减握拳计数
-  if (fistHoldFrames > 0 && bentCount < 2) fistHoldFrames = Math.max(0, fistHoldFrames - 3);
+  if (fistHoldFrames > 0 && (curlCount4 < 4 || pinchDist <= 0.35 || isOpenPalm)) {
+    fistHoldFrames = Math.max(0, fistHoldFrames - 3);
+  }
 
-  // 3) 🖐 张开手掌: avgOpen放松 + 允许最多2指弯曲 (自然张开时小指/无名指可能微曲)
-  if (avgOpen > 0.28 && bentCount <= 2) {
+  // 优先级 2: 🖐 张开手掌 — 5指全部伸展, 90帧≈1.5秒 (防误触)
+  if (extCount4 >= 4) {
     openPalmFrames++;
-    if (openPalmFrames >= 36) {
+    if (openPalmFrames >= 180) {
       openPalmFrames = 0;
-      return { gesture: 'submit', pinchDist, avgOpen, fingerDist };
+      return { gesture: 'submit', pinchDist, angles, isPinching: false };
     }
   } else {
-    if (openPalmFrames > 0 && avgOpen < 0.24) openPalmFrames = Math.max(0, openPalmFrames - 3);
+    if (openPalmFrames > 0 && extCount4 < 3) openPalmFrames = Math.max(0, openPalmFrames - 5);
   }
 
-  return { gesture: 'none', pinchDist, avgOpen, fingerDist };
+  return { gesture: 'none', pinchDist, angles, isPinching };
 }
 
-function updateHoverProgress(cardIdx, progress) {
+function updateHoverProgress(cardIdx, progress, mode) {
   const el = document.getElementById('avail-card-' + cardIdx);
   if (!el) return;
   const bar = el.querySelector('.hover-progress-bar');
   if (bar) {
     bar.style.width = Math.min(100, progress * 100) + '%';
+    // 捏合进度条用金色，悬停用紫色
+    bar.style.background = mode === 'pinch'
+      ? 'linear-gradient(90deg, transparent, var(--gold), #D8D4C8)'
+      : 'linear-gradient(90deg, transparent, var(--gold-dim), var(--gold))';
   }
 }
 
@@ -1696,7 +2169,7 @@ function updateScrollDirection(landmarks) {
   const dx = handX - lastHandX;
   lastHandX = handX;
 
-  if (Math.abs(dx) > 8) {
+  if (Math.abs(dx) > 5) {
     scrollDx = dx;
     scrollDir = dx < 0 ? -1 : 1;
   } else {
@@ -1711,23 +2184,23 @@ function updateScrollDirection(landmarks) {
 
   const leftEl = document.getElementById('scroll-left');
   const rightEl = document.getElementById('scroll-right');
-  leftEl.classList.toggle('active', scrollDir === -1 && scrollStableFrames > 6);
-  rightEl.classList.toggle('active', scrollDir === 1 && scrollStableFrames > 6);
+  leftEl.classList.toggle('active', scrollDir === -1 && scrollStableFrames > 3);
+  rightEl.classList.toggle('active', scrollDir === 1 && scrollStableFrames > 3);
 
   if (scrollCooldown > 0) {
     scrollCooldown--;
     return;
   }
 
-  if (scrollStableFrames === 10) {
+  if (scrollStableFrames === 6) {
     doScroll(scrollDir);
   }
 }
 
 function doScroll(dir) {
-  scrollCooldown = 60;
+  scrollCooldown = 40;
   const scrollEl = document.getElementById('available-scroll');
-  const cardWidth = 88 + 14;
+  const cardWidth = 180 + 16;
   const move = dir * cardWidth * 3;
   scrollEl.scrollLeft += move;
   showToast(dir < 0 ? '◀ 向左翻页' : '▶ 向右翻页');
@@ -1738,18 +2211,62 @@ function doScroll(dir) {
 // ============================================================
 
 function handleSelectCard(idx) {
-  if (idx < 0 || idx >= TAROT_CARDS.length) return;
+  if (idx < 0 || idx >= RUNE_CARDS.length) return;
   if (selectedIndices.has(idx)) {
-    showToast(`🤏 已选中：${TAROT_CARDS[idx].name}`);
+    showToast(`🤏 已选中：${RUNE_CARDS[idx].name}`);
     return;
   }
   selectedIndices.add(idx);
-  showToast(`🤏 选中：${TAROT_CARDS[idx].name}（${selectedIndices.size}张）`);
-  refreshAvailableCards();
-  renderSelectedCards();
-  updateSubmitBtn();
+  showToast(`🤏 选中：${RUNE_CARDS[idx].name}（${selectedIndices.size}张）`);
   hoverHoldFrames = 0;
   updateHoverProgress(idx, 0);
+
+  // GSAP 抽牌动画 — 3段式: 发光脉冲 → 翻转消失 → 已选区翻转登场
+  const cardEl = document.getElementById('avail-card-' + idx);
+  if (cardEl) {
+    // 阶段1: 发光脉冲 (0.18s)
+    gsap.to(cardEl, {
+      scale: 1.25,
+      borderColor: 'rgba(255,215,0,0.9)',
+      boxShadow: '0 0 60px rgba(255,215,0,0.8), 0 16px 50px rgba(0,0,0,0.8)',
+      duration: 0.18,
+      ease: 'power2.out',
+      onComplete: () => {
+        // 阶段2: 翻转消失 — Y轴180°翻转+缩小+上升 (0.45s)
+        gsap.to(cardEl, {
+          scale: 0.25,
+          opacity: 0,
+          y: -80,
+          rotationY: 180,
+          rotationX: 20,
+          duration: 0.45,
+          ease: 'power3.in',
+          onComplete: () => {
+            cardEl.style.transform = '';
+            cardEl.style.opacity = '';
+            // 动画结束后才刷新DOM（否则元素被销毁动画就没了）
+            refreshAvailableCards();
+            renderSelectedCards();
+            // 阶段3: 已选区新牌翻转登场
+            setTimeout(() => {
+              const selCards = document.querySelectorAll('.sel-card');
+              const newCard = selCards[selCards.length - 1];
+              if (newCard) {
+                gsap.fromTo(newCard,
+                  { scale: 0.15, opacity: 0, y: -60, rotationY: -180, rotationX: 15 },
+                  { scale: 1, opacity: 1, y: 0, rotationY: 0, rotationX: 0, duration: 0.65, ease: 'back.out(1.7)' }
+                );
+              }
+            }, 50);
+          }
+        });
+      }
+    });
+  } else {
+    // fallback: card element not found, just refresh
+    refreshAvailableCards();
+    renderSelectedCards();
+  }
 }
 
 // ============================================================
@@ -1767,11 +2284,10 @@ function handleGesture(gesture) {
     case 'fist': {
       if (selectedIndices.size > 0) {
         selectedIndices.clear();
-        showToast('✊ 已清空全部（' + TAROT_CARDS.length + '张待选）');
+        showToast('✊ 已清空全部（' + RUNE_CARDS.length + '张待选）');
         refreshAvailableCards();
         renderSelectedCards();
-        updateSubmitBtn();
-      } else {
+              } else {
         showToast('✊ 握拳（无已选牌）');
       }
       break;
@@ -1792,31 +2308,92 @@ function handleGesture(gesture) {
 // ============================================================
 
 function generateReading(indices) {
-  const cards = [...indices].map(i => TAROT_CARDS[i]);
-  const positions = ['过去', '现在', '未来', '阻碍', '结果', '建议', '环境', '内心', '期望', '基石'];
+  const cards = [...indices].map(i => RUNE_CARDS[i]);
+  const positions = ['过去之因', '当前之在', '未来之果', '暗藏之阻', '显现之果', '命运之谏', '周遭之境', '内心之音', '远方之期', '万物之基'];
 
-  let reading = '## 🔮 牌面解读\n\n';
+  // Element flow analysis
+  const elements = cards.map(c => c.element);
+  const elementFlow = elements.join(' → ');
+  const uniqueElements = [...new Set(elements)];
+  const elementBalance = uniqueElements.length >= 3 ? '元素多元，能量场广阔' :
+    uniqueElements.length === 2 ? '两元交汇，阴阳相济' : '单元凝聚，能量集中';
+
+  // Polarity pattern
+  const polarities = cards.map(c => c.polarity === 'yang' ? '阳' : '阴');
+  const yangCount = polarities.filter(p => p === '阳').length;
+  const yinCount = polarities.filter(p => p === '阴').length;
+  const polarityVerdict = yangCount > yinCount ? '阳盛于阴，行动力强，外显之力占主导' :
+    yinCount > yangCount ? '阴盛于阳，内在觉知，暗流之力更深沉' : '阴阳均衡，内外调和之象';
+
+  let reading = '## 命轨解读\n\n';
+
+  // Overall energy field assessment
+  reading += `**星脉能量场感知**：此次占卜抽得 ${cards.length} 枚古符，元素流转轨迹为「${elementFlow}」。`;
+  reading += `${elementBalance}。${polarityVerdict}。\n\n`;
+
+  // Per-card deep reading with position meaning
   cards.forEach((card, i) => {
-    const pos = positions[i] || `位置${i+1}`;
-    reading += `**【${pos}】${card.name}（${card.symbol}）** — ${card.meaning}\n\n`;
+    const pos = positions[i] || `位格${i+1}`;
+    const posMeaning = {
+      '过去之因': '此符揭示当下局面的根源与缘起',
+      '当前之在': '此符映照你此刻所处的真实状态',
+      '未来之果': '此符指向命运之河的下一个转弯',
+      '暗藏之阻': '此符揭露潜藏的障碍与心结',
+      '显现之果': '此符预示即将显现的结果',
+      '命运之谏': '此符是星轨给予你的指引',
+      '周遭之境': '此符描绘环绕你的环境之力',
+      '内心之音': '此符映出你内心深处的真实声音',
+      '远方之期': '此符遥指远方未至的命运之约',
+      '万物之基': '此符是一切显现的根基与底色',
+    };
+    const posDesc = posMeaning[pos] || '';
+    const elementNature = { '木': '生生不息', '火': '炽烈燃烧', '土': '厚重承载', '金': '锐利决断', '水': '深沉流动' }[card.element] || '';
+    reading += `**【${pos}】${card.name}**（${card.element}·${elementNature}·${card.polarity === 'yang' ? '阳' : '阴'}性）\n`;
+    reading += `${posDesc}。「${card.name}」为${card.meaning}。`;
+    if (i > 0) {
+      const prev = cards[i - 1];
+      reading += `承前符「${prev.name}」之${prev.element}性，${card.element}之力${card.element === prev.element ? '得以延续与深化' : '带来新的能量注入'}。`;
+    }
+    reading += '\n\n';
   });
 
-  const themes = cards.map(c => c.meaning.split('·')[0]);
-  const names = cards.map(c => c.name).join('、');
-
-  reading += '---\n\n';
-  reading += `**命运指引：**\n`;
-  reading += `你抽取了 ${cards.length} 张牌——${names}。牌面主题围绕「${themes.join('」「')}」展开。`;
-
-  if (cards.length === 1) {
-    reading += ` 这张牌是你当前状态的一面镜子，建议你深入体会牌面的象征含义，结合自己的处境做出判断。`;
-  } else if (cards.length === 3) {
-    reading += ` 过去-现在-未来的时间线已经展开：从「${cards[0].name}」的起点，经过「${cards[1].name}」的转折，走向「${cards[2].name}」的终点。`;
-  } else {
-    reading += ` 这些牌相互呼应，暗示着你正处在一个关键的十字路口。宇宙的讯息已经传递，请静心聆听内心的声音。`;
+  // Cross-card relationship analysis
+  if (cards.length >= 2) {
+    reading += '**古符共鸣解析**：\n';
+    for (let i = 0; i < cards.length; i++) {
+      for (let j = i + 1; j < Math.min(cards.length, i + 3); j++) {
+        if (i === j) continue;
+        const a = cards[i], b = cards[j];
+        if (a.element === b.element) {
+          reading += `「${a.name}」与「${b.name}」同属${a.element}，双符共振，${a.element}之力倍增。`;
+        } else if (a.polarity === b.polarity) {
+          reading += `「${a.name}」与「${b.name}」同为${a.polarity === 'yang' ? '阳' : '阴'}性，相互呼应而不冲突。`;
+        } else {
+          reading += `「${a.name}」(阳)与「${b.name}」(阴)阴阳相济，构成完整的能量循环。`;
+        }
+      }
+    }
+    reading += '\n';
   }
 
-  reading += `\n\n命运之轮不停转动，当下的困惑终将消散。记住：塔罗是指引，而非宿命。你永远拥有选择的权利。`;
+  // Destiny oracle
+  reading += '---\n\n';
+  reading += '**命运箴言**：\n';
+  const names = cards.map(c => c.name).join('」「');
+  reading += `星轨已为你展开——「${names}」${cards.length}枚古符，构成了你此刻的命轨图景。`;
+
+  if (cards.length === 1) {
+    reading += `单一古符的出现，是星脉最直接的讯息。它将所有的能量聚焦于一点，让你无法回避。`;
+  } else if (cards.length <= 3) {
+    reading += `寥寥数符，却是星脉最精炼的低语。从「${cards[0].name}」到「${cards[cards.length - 1].name}」，你的轨迹清晰可见。`;
+  } else {
+    reading += `众符齐聚，星涡之力已在你周身流转。${cards.length}枚古符编织的命运之网，每一根丝线都指向同一个真相。`;
+  }
+
+  const allNames = cards.map(c => c.name);
+  const themeWords = cards.map(c => c.meaning.split('与')[0]).join('、');
+  reading += `命轨主题深植于「${themeWords}」——这些并非偶然，而是你灵魂深处的共振。`;
+  reading += `记住：星辰低语并非判决，而是镜子。古符映出的，是你本就拥有的力量。`;
 
   return reading;
 }
@@ -1844,74 +2421,218 @@ function showInterpretation() {
   const overlay = document.getElementById('result-overlay');
   const cardsContainer = document.getElementById('result-cards');
   const readingEl = document.getElementById('result-reading').querySelector('.rr-text');
+  const destinyTitleEl = document.getElementById('result-destiny-title');
 
-  // 渲染选中牌
-  cardsContainer.innerHTML = '';
   const indicesArr = [...selectedIndices];
-  const cards = indicesArr.map(i => TAROT_CARDS[i]);
+  const cards = indicesArr.map(i => RUNE_CARDS[i]);
+
+  // Calculate destiny title
+  const seed = indicesArr.reduce((s, idx) => s + idx * 7, 0);
+  const destinyTitle = WORLDVIEW.destinyTitles[seed % WORLDVIEW.destinyTitles.length];
+  destinyTitleEl.textContent = destinyTitle;
+
+  // Render selected cards immediately
+  cardsContainer.innerHTML = '';
   indicesArr.forEach(idx => {
-    const card = TAROT_CARDS[idx];
+    const card = RUNE_CARDS[idx];
     const div = document.createElement('div');
     div.className = 'result-card';
     div.innerHTML = `
-      <div class="rc-symbol">${card.symbol}</div>
+      <img src="${getCardFacePath(card)}" alt="${card.name}" style="width:180px;height:auto;border-radius:8px;margin-bottom:12px;box-shadow:0 0 20px rgba(232,213,163,0.42);">
       <div class="rc-name">${card.name}</div>
       <div class="rc-meaning">${card.meaning}</div>
     `;
     cardsContainer.appendChild(div);
   });
 
+  // Show overlay immediately
   overlay.classList.add('show');
+  overlay.offsetHeight; // force reflow
 
-  // 显示加载动画
-  readingEl.innerHTML = '<span class="rr-loading">🔮 正在召唤AI解读<span class="rr-dots"></span></span>';
-  showToast('✨ 正在召唤AI解读...');
+  // GSAP card entrance + reading slide-in
+  gsap.fromTo('#result-cards .result-card',
+    { scale: 0, opacity: 0, rotationY: -180, y: 40 },
+    { scale: 1, opacity: 1, rotationY: 0, y: 0, duration: 0.7, stagger: 0.1, ease: 'back.out(2.5)' }
+  );
+  gsap.fromTo('#result-reading',
+    { y: 60, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.6, delay: 0.4, ease: 'power2.out' }
+  );
+  gsap.fromTo('#result-title, #result-destiny-title, #result-destiny-subtitle',
+    { y: -30, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: 'power2.out' }
+  );
 
-  // 构建 prompt
+  // === Vortex particle canvas animation (plays during AI call) ===
+  const vortexCanvas = document.createElement('canvas');
+  vortexCanvas.id = 'vortex-canvas';
+  vortexCanvas.style.cssText = 'position:fixed;inset:0;z-index:499;pointer-events:none;';
+  overlay.appendChild(vortexCanvas);
+  vortexCanvas.width = window.innerWidth;
+  vortexCanvas.height = window.innerHeight;
+  const vctx = vortexCanvas.getContext('2d');
+  const vcx = vortexCanvas.width / 2;
+  const vcy = vortexCanvas.height / 2;
+
+  const vortexParticles = [];
+  for (let p = 0; p < 80; p++) {
+    vortexParticles.push({
+      angle: Math.random() * Math.PI * 2,
+      radius: 20 + Math.random() * 30,
+      speed: 0.6 + Math.random() * 1.8,
+      spiralSpeed: 0.3 + Math.random() * 0.9,
+      size: 1 + Math.random() * 3,
+      alpha: 0.3 + Math.random() * 0.7,
+      color: Math.random() < 0.3 ? '232,213,163' : '196,169,106',
+      orbitTilt: (Math.random() - 0.5) * 0.5,
+    });
+  }
+
+  let vortexRunning = true;
+  let vortexStart = performance.now();
+
+  function drawVortex(now) {
+    if (!vortexRunning) return;
+    const elapsed = (now - vortexStart) / 1000;
+    vctx.clearRect(0, 0, vortexCanvas.width, vortexCanvas.height);
+
+    // Central pulsing glow
+    const glowSize = 100 + Math.sin(elapsed * 2) * 35;
+    const glow = vctx.createRadialGradient(vcx, vcy, 10, vcx, vcy, glowSize);
+    glow.addColorStop(0, 'rgba(232,213,163,0.30)');
+    glow.addColorStop(0.5, 'rgba(196,169,106,0.10)');
+    glow.addColorStop(1, 'transparent');
+    vctx.fillStyle = glow;
+    vctx.beginPath(); vctx.arc(vcx, vcy, glowSize, 0, Math.PI * 2); vctx.fill();
+
+    // Energy rings
+    for (let r = 0; r < 4; r++) {
+      const ringR = 70 + r * 45 + Math.sin(elapsed * 1.5 + r) * 18;
+      const ringAlpha = 0.14 - r * 0.03;
+      vctx.strokeStyle = `rgba(232,213,163,${Math.max(0.02, ringAlpha)})`;
+      vctx.lineWidth = 0.8;
+      vctx.beginPath(); vctx.arc(vcx, vcy, ringR, 0, Math.PI * 2);
+      vctx.setLineDash([5 + r * 2, 10 + r * 3]); vctx.stroke(); vctx.setLineDash([]);
+    }
+
+    // Spiral particles
+    vortexParticles.forEach(p => {
+      p.angle += p.speed * 0.02;
+      p.radius += p.spiralSpeed * 0.4;
+      if (p.radius > 280) { p.radius = 20 + Math.random() * 20; p.angle = Math.random() * Math.PI * 2; }
+      if (p.radius < 5) { p.radius = 20; }
+      const tiltX = Math.cos(p.angle) * p.orbitTilt;
+      const x = vcx + Math.cos(p.angle) * p.radius;
+      const y = vcy + Math.sin(p.angle) * p.radius * (1 + tiltX * 0.3);
+      const twinkle = 0.5 + 0.5 * Math.sin(elapsed * 3 + p.angle);
+      const alpha = p.alpha * twinkle * (1 - (p.radius / 300));
+      vctx.fillStyle = `rgba(${p.color},${Math.max(0, alpha)})`;
+      vctx.beginPath(); vctx.arc(x, y, p.size * twinkle, 0, Math.PI * 2); vctx.fill();
+    });
+
+    // Orbiting rune names
+    const nameAngles = cards.map((_, i) => (elapsed * 0.4 + (Math.PI * 2 / cards.length) * i));
+    vctx.font = 'bold 64px "Noto Serif SC", serif';
+    vctx.textAlign = 'center'; vctx.textBaseline = 'middle';
+    cards.forEach((card, i) => {
+      const angle = nameAngles[i];
+      const r = 110 + Math.sin(elapsed + i) * 35;
+      const nx = vcx + Math.cos(angle) * r;
+      const ny = vcy + Math.sin(angle) * r;
+      const na = 0.18 + 0.12 * Math.sin(elapsed * 2 + i);
+      vctx.fillStyle = `rgba(232,213,163,${na})`;
+      vctx.fillText(card.name, nx, ny);
+    });
+
+    // Outer glow ring
+    vctx.strokeStyle = `rgba(232,213,163,${0.07 + Math.sin(elapsed) * 0.04})`;
+    vctx.lineWidth = 2;
+    vctx.beginPath(); vctx.arc(vcx, vcy, 280 + Math.sin(elapsed * 0.7) * 25, 0, Math.PI * 2); vctx.stroke();
+
+    requestAnimationFrame(drawVortex);
+  }
+  requestAnimationFrame(drawVortex);
+
+  // Loading text
+  readingEl.innerHTML = '<span class="rr-loading">星涡流转，命轨正在显现<span class="rr-dots"></span></span>';
+
+  // === Build enhanced structured prompt ===
+  const selectionOrder = cards.map((c, i) => `第${i+1}枚「${c.name}」`).join(' → ');
+  const elementSummary = cards.map(c => c.element).join('→');
+  const polarityMix = cards.map(c => c.polarity === 'yang' ? '阳' : '阴').join('');
+
   const cardDescs = cards.map((c, i) => {
-    const pos = ['过去','现在','未来','阻碍','结果','建议','环境','内心','期望','基石'][i] || `位置${i+1}`;
-    return `${pos}：${c.name}（${c.symbol}）— ${c.meaning}`;
+    const pos = ['过去之因','当前之在','未来之果','暗藏之阻','显现之果','命运之谏','周遭之境','内心之音','远方之期','万物之基'][i] || `位格${i+1}`;
+    return `${pos}：${c.name}（${c.element}属性·${c.polarity === 'yang' ? '阳' : '阴'}·意为${c.meaning}）`;
   }).join('\n');
 
-  const prompt = `你是一位神秘的塔罗占卜师。请根据以下${cards.length}张塔罗牌进行深度解读：
+  const prompt = `你是「星辰低语」中最古老的星语者，掌握星脉古符的终极奥秘。请根据以下占卜进行深度命轨解读。
 
+**占卜数据**：
+- 选中顺序：${selectionOrder}
+- 元素流转：${elementSummary}
+- 阴阳交错：${polarityMix}
+- 古符数量：${cards.length}枚
+
+**各符位格**：
 ${cardDescs}
 
-**格式要求**（请严格遵守，不添加多余内容）：
-首先写一行"## 🔮 综合解读"
-然后用**粗体**标出每张牌的名称，给出2-3句解读
-最后用"---"分隔，再写一段"**命运指引**："的总结
+**解读要求**：
+1. 先整体感知这组古符的能量场（元素与阴阳的流转趋势），给出总体判断
+2. 按选中顺序逐枚深度解读，结合其在序列中的位置含义
+3. 分析古符之间的相互呼应、冲突或递进关系
+4. 最后给出命运箴言，综合所有符纹的主题指向
+5. 使用"星轨""命符""低语""星脉""古符""位格""能量场""流转"等术语
+6. 像古老石碑上的预言，庄严深邃但不空洞
+7. 控制在400-600字
 
-总共控制在200-400字，不要用代码块，不要用表格。`;
+格式：用"## 命轨解读"开头，**粗体**标每枚符名，"---"分隔后写"**命运箴言**："`;
 
-  // 调用 MiniMax AI (通过 PHP 代理)
-  fetch('/hand-gesture/proxy.php', {
+  // Start AI call in parallel with vortex
+  const aiPromise = fetch('/hand-gesture/proxy.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       messages: [
-        { role: 'system', content: '你是一位神秘而睿智的塔罗占卜师，擅长解读命运。回答简洁有力，充满哲理。使用markdown格式组织内容但只使用最基本的粗体和标题。' },
+        { role: 'system', content: '你是星辰低语中最古老的星语者，精通星脉古符的终极奥秘。回答庄严深邃如石碑箴言，结构清晰。善用"星轨""命符""低语""能量场""流转"等术语。禁止"石头""算命""塔罗"等词，用"古符""观星""命轨"替代。' },
         { role: 'user', content: prompt }
       ],
-      max_tokens: 1024
+      max_tokens: 2048
     })
   })
   .then(res => res.json())
   .then(data => {
     if (data.choices && data.choices[0] && data.choices[0].message) {
-      readingEl.innerHTML = renderMarkdown(data.choices[0].message.content);
-      showToast('✨ AI解读完成');
-    } else if (data.error) {
-      throw new Error(data.error);
-    } else {
-      throw new Error('Invalid response');
+      return data.choices[0].message.content;
     }
-  })
-  .catch(err => {
-    console.warn('AI API failed, using local reading:', err);
-    readingEl.innerHTML = renderMarkdown(generateReading(selectedIndices));
-    showToast('⚠ AI暂不可用，显示基础解读');
+    throw new Error(data.error || 'Invalid response');
   });
+
+  const localReading = generateReading(indicesArr);
+  const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 8000));
+
+  Promise.race([aiPromise, timeoutPromise])
+    .then(aiText => {
+      vortexRunning = false;
+      gsap.to(vortexCanvas, {
+        opacity: 0, duration: 0.6, ease: 'power2.in',
+        onComplete: () => vortexCanvas.remove()
+      });
+      readingEl.innerHTML = renderMarkdown(aiText || localReading);
+      gsap.fromTo('#result-reading',
+        { boxShadow: '0 0 0px rgba(232,213,163,0)' },
+        { boxShadow: '0 0 50px rgba(232,213,163,0.25)', duration: 0.8, ease: 'power2.out' }
+      );
+    })
+    .catch(err => {
+      console.warn('AI API failed, using local reading:', err);
+      vortexRunning = false;
+      gsap.to(vortexCanvas, {
+        opacity: 0, duration: 0.6, ease: 'power2.in',
+        onComplete: () => vortexCanvas.remove()
+      });
+      readingEl.innerHTML = renderMarkdown(localReading);
+    });
 }
 
 function closeInterpretation() {
@@ -1922,8 +2643,7 @@ function resetAll() {
   selectedIndices.clear();
   refreshAvailableCards();
   renderSelectedCards();
-  updateSubmitBtn();
-  closeInterpretation();
+    closeInterpretation();
   showToast('🔄 已重置，开始新的占卜');
 }
 
@@ -1954,13 +2674,309 @@ function showToast(msg) {
   const el = document.getElementById('action-toast');
   el.textContent = msg;
   el.classList.add('show');
+  gsap.fromTo(el, { y: -16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
   clearTimeout(el._t);
-  el._t = setTimeout(() => el.classList.remove('show'), 2000);
+  el._t = setTimeout(() => {
+    gsap.to(el, { y: -8, opacity: 0, duration: 0.25, ease: 'power2.in', onComplete: () => el.classList.remove('show') });
+  }, 2000);
+}
+
+// ============================================================
+// Intro Animation
+// ============================================================
+let introPage = 0;
+const INTRO_TOTAL = WORLDVIEW.lorePages.length + 2; // title + lore pages + start
+
+function initIntro() {
+  renderIntroPage(0);
+  renderIntroDots();
+  initIntroStars();
+  const overlay = document.getElementById('intro-overlay');
+  overlay.addEventListener('click', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+    if (introPage < INTRO_TOTAL - 1) { introPage++; renderIntroPage(introPage); renderIntroDots(); }
+  });
+  overlay.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (e.deltaY > 0 && introPage < INTRO_TOTAL - 1) { introPage++; renderIntroPage(introPage); renderIntroDots(); }
+    else if (e.deltaY < 0 && introPage > 0) { introPage--; renderIntroPage(introPage); renderIntroDots(); }
+  }, { passive: false });
+  let touchY = 0;
+  overlay.addEventListener('touchstart', (e) => { touchY = e.touches[0].clientY; });
+  overlay.addEventListener('touchend', (e) => {
+    const dy = touchY - e.changedTouches[0].clientY;
+    if (Math.abs(dy) > 40) {
+      if (dy > 0 && introPage < INTRO_TOTAL - 1) { introPage++; renderIntroPage(introPage); renderIntroDots(); }
+      else if (dy < 0 && introPage > 0) { introPage--; renderIntroPage(introPage); renderIntroDots(); }
+    }
+  });
+}
+
+function renderIntroPage(page) {
+  const content = document.getElementById('intro-content');
+  const hint = document.getElementById('intro-hint');
+  content.classList.add('fade-out');
+  content.classList.remove('fade-in');
+  setTimeout(() => {
+    if (page === 0) {
+      content.innerHTML = `
+        <div class="intro-title">${WORLDVIEW.title}</div>
+        <div class="intro-deco">
+          <div class="intro-deco-line"></div>
+          <div class="intro-deco-dot"></div>
+          <div class="intro-deco-line right"></div>
+        </div>
+        <div class="intro-sub">${WORLDVIEW.subtitle}</div>
+      `;
+      hint.textContent = '点击继续';
+    } else if (page <= WORLDVIEW.lorePages.length) {
+      const lore = WORLDVIEW.lorePages[page - 1];
+      content.innerHTML = `
+        <div class="intro-story-title">${lore.title}</div>
+        <div class="intro-story-text">${lore.text}</div>
+        <div class="intro-source">${lore.source}</div>
+      `;
+      hint.textContent = page < INTRO_TOTAL - 1 ? '点击继续' : '';
+    } else {
+      // 最后一页：直接进入
+      content.innerHTML = `
+        <div class="intro-name-label">— 星辰低语 —</div>
+        <div class="intro-story-text" style="font-size: 26px;text-align:center;">命运并非被预言\n而是在触碰中被重新书写</div>
+        <button class="intro-btn" id="intro-start-btn">开始占卜</button>
+      `;
+      hint.textContent = '';
+      document.getElementById('intro-start-btn').addEventListener('click', dismissIntro);
+    }
+    content.classList.remove('fade-out');
+    content.classList.add('fade-in');
+  }, 400);
+}
+
+function renderIntroDots() {
+  const dots = document.getElementById('intro-dots');
+  dots.innerHTML = '';
+  for (let i = 0; i < INTRO_TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'intro-dot' + (i === introPage ? ' active' : '') + (i < introPage ? ' visited' : '');
+    d.addEventListener('click', (e) => { e.stopPropagation(); if (i <= introPage) { introPage = i; renderIntroPage(i); renderIntroDots(); } });
+    dots.appendChild(d);
+  }
+}
+
+function dismissIntro() {
+  const overlay = document.getElementById('intro-overlay');
+  const content = document.getElementById('intro-content');
+
+  // 确保一定会关闭，1秒兜底 (GSAP fallback 走不到 onComplete)
+  let closed = false;
+  const forceClose = () => {
+    if (closed) return;
+    closed = true;
+    overlay.classList.add('hidden');
+    overlay.style.display = 'none';
+    overlay.style.opacity = '';
+  };
+  setTimeout(forceClose, 1000);
+
+  gsap.to(content, { opacity: 0, y: -30, duration: 0.5, ease: 'power2.in' });
+  gsap.to(overlay, { opacity: 0, duration: 0.6, delay: 0.2, ease: 'power2.in', onComplete: forceClose });
+
+  // 如果 GSAP 是 no-op fallback，直接关闭
+  if (typeof gsap === 'undefined' || !gsap.to || gsap.to === (window._gsapFallback || {}).to) {
+    forceClose();
+  }
+
+  tryAutoplayBGM();
+}
+
+function initIntroStars() {
+  const canvas = document.getElementById('intro-stars');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const stars = Array.from({ length: 60 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: 0.3 + Math.random() * 1.2,
+    speed: 0.1 + Math.random() * 0.3,
+    phase: Math.random() * Math.PI * 2,
+    drift: (Math.random() - 0.5) * 0.2
+  }));
+  let time = 0;
+  function render() {
+    if (document.getElementById('intro-overlay').classList.contains('hidden')) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0B0D10';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    time += 0.005;
+    stars.forEach(s => {
+      s.y += s.speed;
+      s.x += Math.sin(time + s.phase) * s.drift;
+      if (s.y > canvas.height + 5) { s.y = -5; s.x = Math.random() * canvas.width; }
+      const twinkle = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(time * 2 + s.phase));
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = s.r > 1 ? `rgba(184,154,99,${twinkle * 0.5})` : `rgba(216,212,200,${twinkle * 0.4})`;
+      ctx.fill();
+      if (s.r > 1 && twinkle > 0.7) {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r * 2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(184,154,99,${twinkle * 0.15})`;
+        ctx.fill();
+      }
+    });
+    requestAnimationFrame(render);
+  }
+  render();
+}
+
+// ============================================================
+// Ceremony Animation — GSAP 驱动的仪式动画
+// ============================================================
+function runCeremonyAnimation(cardNames, onComplete) {
+  const overlay = document.getElementById('ceremony-overlay');
+  const canvas = document.getElementById('ceremony-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  overlay.style.display = 'block';
+
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+  const runeOffsets = cardNames.map((_, i) => ({
+    angle: (Math.PI * 2 / cardNames.length) * i,
+    radius: 70 + Math.random() * 50,
+    speed: 0.4 + Math.random() * 0.6
+  }));
+
+  const tl = gsap.timeline({
+    onComplete: () => {
+      overlay.style.display = 'none';
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (onComplete) onComplete();
+    }
+  });
+
+  // Phase tracking object for canvas render loop
+  const state = { phase: 'dark', progress: 0, flashAlpha: 0 };
+  let animFrame;
+
+  function renderLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0B0D10';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const elapsed = performance.now() - state.startTime;
+
+    // Vortex glow
+    if (state.phase === 'vortex' || state.phase === 'flash') {
+      const glowP = Math.min(1, (elapsed - 900) / 1300);
+      const glowR = 40 + glowP * 100;
+      const glow = ctx.createRadialGradient(cx, cy, 3, cx, cy, glowR);
+      glow.addColorStop(0, `rgba(184,154,99,${0.6 - glowP * 0.3})`);
+      glow.addColorStop(0.5, `rgba(184,154,99,${0.2 - glowP * 0.1})`);
+      glow.addColorStop(1, 'transparent');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Rotating rings
+      ctx.save();
+      ctx.translate(cx, cy);
+      for (let ring = 0; ring < 3; ring++) {
+        const r = 60 + ring * 35 + glowP * 25;
+        const rot = elapsed * 0.001 * (ring % 2 === 0 ? 1 : -0.7);
+        ctx.save();
+        ctx.rotate(rot);
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(184,154,99,${0.15 - ring * 0.04})`;
+        ctx.lineWidth = 0.5;
+        ctx.setLineDash([5, 10]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+
+      // Floating rune names
+      ctx.font = '16px "Noto Serif SC", serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      cardNames.forEach((name, i) => {
+        const off = runeOffsets[i];
+        const angle = off.angle + elapsed * 0.001 * off.speed;
+        const x = Math.cos(angle) * off.radius;
+        const y = Math.sin(angle) * off.radius;
+        const alpha = Math.min(1, glowP * 2) * 0.7;
+        ctx.fillStyle = `rgba(184,154,99,${alpha})`;
+        ctx.fillText(name, x, y);
+      });
+      ctx.restore();
+    }
+
+    // Flash overlay
+    if (state.phase === 'flash') {
+      ctx.fillStyle = `rgba(216,212,200,${state.flashAlpha})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      if (state.flashAlpha > 0.3) {
+        ctx.font = 'bold 32px "Noto Serif SC", serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = `rgba(11,13,16,${state.flashAlpha * 1.2})`;
+        ctx.fillText('天命已显', cx, cy);
+      }
+    }
+
+    // Fade out
+    if (state.phase === 'fadeout') {
+      const fadeP = state.progress;
+      ctx.fillStyle = `rgba(11,13,16,${fadeP})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    if (state.phase !== 'done') {
+      animFrame = requestAnimationFrame(renderLoop);
+    }
+  }
+
+  // GSAP Timeline — controlling the canvas phases
+  state.startTime = performance.now();
+  state.phase = 'vortex';
+  animFrame = requestAnimationFrame(renderLoop);
+
+  tl.to(state, {
+    duration: 0.001,
+    onStart: () => { state.phase = 'vortex'; }
+  })
+  .to(state, {
+    duration: 1.3,
+    ease: 'none',
+    onComplete: () => { state.phase = 'flash'; }
+  })
+  .to(state, {
+    flashAlpha: 0.7,
+    duration: 0.3,
+    ease: 'power2.in',
+    onComplete: () => {}
+  })
+  .to(state, {
+    flashAlpha: 0,
+    duration: 0.35,
+    ease: 'power2.out',
+    onComplete: () => { state.phase = 'fadeout'; }
+  })
+  .to(state, {
+    progress: 1,
+    duration: 0.6,
+    ease: 'power2.in',
+    onComplete: () => { state.phase = 'done'; cancelAnimationFrame(animFrame); }
+  });
 }
 
 // ============================================================
 // 启动
 // ============================================================
+initIntro();
 init();
 </script>
 </body>
