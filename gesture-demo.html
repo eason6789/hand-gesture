@@ -200,8 +200,8 @@
 
   .avail-card {
     flex-shrink: 0;
-    width: 200px;
-    height: 300px;
+    width: 160px;
+    height: 240px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
     background: linear-gradient(160deg, #141210, #0F0E0C);
@@ -327,8 +327,8 @@
 
   .sel-card {
     flex-shrink: 0;
-    width: 200px;
-    height: 290px;
+    width: 160px;
+    height: 232px;
     border-radius: var(--radius);
     border: 1.5px solid var(--gold);
     background: linear-gradient(160deg, rgba(232,213,163,0.14), rgba(232,213,163,0.04));
@@ -462,25 +462,27 @@
     background: rgba(26,24,20,0.92);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 18px 32px;
+    padding: 12px 20px;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     display: flex;
     gap: 12px;
     z-index: 200;
     box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(232,213,163,0.11);
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: center;
+    overflow-x: auto;
   }
   .gesture-card {
     text-align: center;
-    padding: 14px 22px;
+    padding: 10px 16px;
     border-radius: var(--radius-sm);
     border: 1px solid rgba(255,255,255,0.05);
-    min-width: 90px;
+    min-width: 80px;
     transition: all 0.3s var(--easing);
     cursor: pointer;
     background: rgba(255,255,255,0.02);
+    flex-shrink: 0;
   }
   .gesture-card:hover {
     background: rgba(232,213,163,0.11);
@@ -551,6 +553,8 @@
     gap: 20px;
     justify-content: center;
     margin-bottom: 32px;
+    position: relative;
+    z-index: 10;
   }
 
   .result-card {
@@ -572,6 +576,8 @@
     width: 100%;
     background: rgba(26,24,20,0.70);
     border: 1px solid var(--border);
+    position: relative;
+    z-index: 10;
     border-radius: var(--radius-lg);
     padding: 24px 28px;
     text-align: center;
@@ -760,7 +766,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 500;
+    z-index: 1200;
     text-align: center;
     padding: 40px;
   }
@@ -801,11 +807,11 @@
 
   /* ========== Mobile responsiveness ========== */
   @media (max-width: 768px) {
-    .avail-card { width: 130px; height: 195px; }
+    .avail-card { width: 104px; height: 156px; }
     .avail-card .card-symbol { font-size: 18px; }
     .avail-card .card-name { font-size: 11px; }
     .avail-card .card-meaning { font-size: 10px; }
-    .sel-card { width: 120px; height: 175px; }
+    .sel-card { width: 96px; height: 140px; }
     .sel-card .card-symbol { font-size: 22px; }
     .sel-card .card-name { font-size: 12px; }
     #panel { gap: 8px; padding: 10px 14px; }
@@ -815,16 +821,16 @@
     .gesture-card .desc { font-size: 9px; }
     #available-scroll { padding: 10px 14px; gap: 8px; }
     #debug-panel { bottom: 60px; left: 4px; padding: 6px 8px; font-size: 9px; min-width: 160px; }
-    .result-card { width: 90px; padding: 12px 8px; }
+    .result-card { width: 72px; padding: 12px 8px; }
     header h1 { font-size: 18px; letter-spacing: 3px; }
   }
 
   @media (max-width: 480px) {
-    .avail-card { width: 100px; height: 150px; }
+    .avail-card { width: 80px; height: 120px; }
     .avail-card .card-symbol { font-size: 15px; }
     .avail-card .card-name { font-size: 10px; }
     .avail-card .card-meaning { font-size: 8px; }
-    .sel-card { width: 95px; height: 142px; }
+    .sel-card { width: 76px; height: 114px; }
     .sel-card .card-symbol { font-size: 18px; }
     .sel-card .card-name { font-size: 11px; }
     #panel { gap: 4px; padding: 8px 10px; }
@@ -863,11 +869,11 @@
   }
   .intro-deco-left {
     left: 10px;
-    background-image: url(assets/decoration/icon_01.png);
+    background-image: url(https://single-az-1251416377.cos.ap-guangzhou.myqcloud.com/hand-gesture/assets/decoration/icon_01.png);
   }
   .intro-deco-right {
     right: 10px;
-    background-image: url(assets/decoration/icon_05.png);
+    background-image: url(https://single-az-1251416377.cos.ap-guangzhou.myqcloud.com/hand-gesture/assets/decoration/icon_05.png);
   }
   #intro-stars { position: absolute; inset: 0; width: 100%; height: 100%; }
   .intro-cosmic-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 300px; height: 300px; background: radial-gradient(circle, rgba(232,213,163,0.11) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: 1; animation: cosmicPulse 4s ease-in-out infinite; }
@@ -1188,9 +1194,8 @@
 <script type="module">
 import { HandLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.17/+esm';
 
-// ----- COS 静态资源配置 (本地开发用相对路径，部署后走COS) -----
-const COS_BASE = location.hostname === 'localhost' || location.hostname === '127.0.0.1'
-  ? '' : 'https://cos.tuteng3.site/hand-gesture';
+// ----- 卡牌/装饰静态资源配置 (走腾讯云 COS 公开直链) -----
+const COS_BASE = 'https://single-az-1251416377.cos.ap-guangzhou.myqcloud.com/hand-gesture';
 function cos(path) { return COS_BASE ? COS_BASE + '/' + path : path; }
 
 // GSAP safety — no-op fallback if GSAP fails to load
@@ -1301,8 +1306,9 @@ let fistHoldFrames = 0;
 let hoverHoldFrames = 0;
 let lastPointedCard = -1;
 
-// 捏合选中持续帧数 (180帧≈3秒)
-let pinchHoldFrames = 0;
+// 捏合选中计时 (真实时间,2000ms=2秒)
+let pinchStartTime = 0;
+let pinchLostTime = 0;
 
 // 张开手掌持续帧数
 let openPalmFrames = 0;
@@ -1352,7 +1358,9 @@ async function init() {
       numHands: 2,
       runningMode: 'VIDEO',
       baseOptions: {
-        modelAssetPath: 'https://single-az-1251416377.cos.ap-guangzhou.myqcloud.com/vibe-motion/hand_landmarker.task',
+        modelAssetPath: (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+          ? 'hand_landmarker.task'
+          : 'https://single-az-1251416377.cos.ap-guangzhou.myqcloud.com/vibe-motion/hand_landmarker.task',
         minHandDetectionConfidence: 0.4,
         minHandPresenceConfidence: 0.4,
         minTrackingConfidence: 0.4,
@@ -1705,8 +1713,9 @@ function renderAvailableCards() {
     c.id = 'avail-card-' + idx;
     if (selectedIndices.has(idx)) c.classList.add('selected-card');
     if (idx === hoveredIndex) c.classList.add('hovered');
+    const cardImgSrc = selectedIndices.has(idx) ? getCardBackPath(idx) : getCardFacePath(card);
     c.innerHTML = `
-      <img class="card-img" src="${getCardFacePath(card)}" alt="${card.name}">
+      <img class="card-img" src="${cardImgSrc}" alt="${card.name}">
       <div class="card-label">${card.name}</div>
       <div class="hover-progress-bar"></div>
     `;
@@ -1882,25 +1891,29 @@ async function detectLoop() {
     const pinchDist = gestureResult.pinchDist;
     const isPinching = gestureResult.isPinching || false;
 
-    // 捏合保持计时器 — 捏住同一张卡120帧≈2秒即选中
+    // 捏合保持计时器 — 用真实时间,不依赖帧率
     if (isPinching && hoveredIndex >= 0 && !selectedIndices.has(hoveredIndex)) {
-      if (hoveredIndex === lastPointedCard) {
-        pinchHoldFrames++;
-        updateHoverProgress(hoveredIndex, pinchHoldFrames / 120, 'pinch');
-      } else {
-        if (lastPointedCard >= 0) updateHoverProgress(lastPointedCard, 0);
-        lastPointedCard = hoveredIndex;
-        pinchHoldFrames = Math.max(1, pinchHoldFrames);
-        updateHoverProgress(hoveredIndex, pinchHoldFrames / 120, 'pinch');
-      }
-      if (pinchHoldFrames >= 120) {
+      const now = performance.now();
+      if (!pinchStartTime) pinchStartTime = now;
+      pinchLostTime = 0;
+      const elapsed = now - pinchStartTime;
+      const progress = Math.min(1, elapsed / 2000);
+      updateHoverProgress(hoveredIndex, progress, 'pinch');
+      if (elapsed >= 2000) {
         handleSelectCard(hoveredIndex);
-        pinchHoldFrames = 0;
+        pinchStartTime = 0;
         updateHoverProgress(hoveredIndex, 0);
       }
       // 捏合中 → 暂停悬停计时器
       hoverHoldFrames = 0;
     } else {
+      // 捏合丢失 → 超过250ms才重置
+      const now = performance.now();
+      if (!pinchLostTime) pinchLostTime = now;
+      if (now - pinchLostTime > 250) {
+        pinchStartTime = 0;
+        pinchLostTime = 0;
+      }
       // 悬停计时器 — 手指指向同一张卡90帧≈1.5秒 (仅在没捏合时)
       if (hoveredIndex >= 0) {
         if (hoveredIndex === lastPointedCard) {
@@ -1922,8 +1935,6 @@ async function detectLoop() {
         hoverHoldFrames = 0;
         lastPointedCard = -1;
       }
-      // 没在捏合 → 缓慢衰减（而非硬重置，-3帧避免偶尔检测丢失导致归零）
-      pinchHoldFrames = Math.max(0, pinchHoldFrames - 3);
     }
 
     // 手势触发（fist/submit 首次检测到即触发，带防抖）
@@ -1955,7 +1966,7 @@ async function detectLoop() {
     document.getElementById('dbg-gesture').textContent = gesture;
     document.getElementById('dbg-hovered').textContent = hoveredIndex;
     document.getElementById('dbg-hoverhold').textContent = hoverHoldFrames;
-    document.getElementById('dbg-pinchhold').textContent = pinchHoldFrames;
+    document.getElementById('dbg-pinchhold').textContent = pinchStartTime ? Math.round(performance.now() - pinchStartTime) : 0;
     document.getElementById('dbg-fistframes').textContent = fistHoldFrames;
     document.getElementById('dbg-openpalm').textContent = openPalmFrames;
     document.getElementById('dbg-indextip').textContent = `${indexTip.x.toFixed(0)},${indexTip.y.toFixed(0)}`;
@@ -1966,7 +1977,8 @@ async function detectLoop() {
     scrollStableFrames = 0;
     fistHoldFrames = 0;
     hoverHoldFrames = 0;
-    pinchHoldFrames = 0;
+    pinchStartTime = 0;
+    pinchLostTime = 0;
     openPalmFrames = 0;
     if (lastPointedCard >= 0) updateHoverProgress(lastPointedCard, 0);
     lastPointedCard = -1;
@@ -2120,7 +2132,7 @@ function recognizeGesture(landmarks) {
   const isOpenPalm = extCount4 >= 3;
 
   // 优先级 1: ✊ 握拳 — 手指弯曲 + 拇指食指分开(非捏合) + 不是张掌
-  if (curlCount4 >= 4 && pinchDist > 0.35 && !isOpenPalm) {
+  if (curlCount4 >= 3 && pinchDist > 0.2 && !isOpenPalm) {
     fistHoldFrames++;
     openPalmFrames = 0;
     if (fistHoldFrames >= 300) {  // 5秒 (60fps × 5)
@@ -2129,19 +2141,19 @@ function recognizeGesture(landmarks) {
     }
     return { gesture: 'fist_holding', pinchDist, angles, isPinching };
   }
-  if (fistHoldFrames > 0 && (curlCount4 < 4 || pinchDist <= 0.35 || isOpenPalm)) {
-    fistHoldFrames = Math.max(0, fistHoldFrames - 3);
+  if (fistHoldFrames > 0 && (curlCount4 < 3 || pinchDist <= 0.2 || isOpenPalm)) {
+    fistHoldFrames = Math.max(0, fistHoldFrames - 1);
   }
 
   // 优先级 2: 🖐 张开手掌 — 5指全部伸展, 90帧≈1.5秒 (防误触)
-  if (extCount4 >= 4) {
+  if (extCount4 >= 3) {
     openPalmFrames++;
     if (openPalmFrames >= 180) {
       openPalmFrames = 0;
       return { gesture: 'submit', pinchDist, angles, isPinching: false };
     }
   } else {
-    if (openPalmFrames > 0 && extCount4 < 3) openPalmFrames = Math.max(0, openPalmFrames - 5);
+    if (openPalmFrames > 0 && extCount4 < 3) openPalmFrames = Math.max(0, openPalmFrames - 1);
   }
 
   return { gesture: 'none', pinchDist, angles, isPinching };
@@ -2200,7 +2212,7 @@ function updateScrollDirection(landmarks) {
 function doScroll(dir) {
   scrollCooldown = 40;
   const scrollEl = document.getElementById('available-scroll');
-  const cardWidth = 180 + 16;
+  const cardWidth = 160 + 12;
   const move = dir * cardWidth * 3;
   scrollEl.scrollLeft += move;
   showToast(dir < 0 ? '◀ 向左翻页' : '▶ 向右翻页');
@@ -2399,22 +2411,25 @@ function generateReading(indices) {
 }
 
 function renderMarkdown(text) {
-  // 简单 Markdown → HTML 转换
   let html = text;
-  // 转义 HTML 特殊字符（除了我们生成的标签）
   html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  // 粗体 **text**
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  // 分隔线 --- 或 ***
-  html = html.replace(/^(---|\*\*\*)$/gm, '<hr>');
-  // ## 标题
+  // Headers (before paragraph splitting)
   html = html.replace(/^## (.+)$/gm, '<h3 class="rr-h3">$1</h3>');
-  // # 标题
   html = html.replace(/^# (.+)$/gm, '<h2 class="rr-h2">$1</h2>');
-  // 换行
-  html = html.replace(/\n\n/g, '</p><p>');
-  html = html.replace(/\n/g, '<br>');
-  return '<p>' + html + '</p>';
+  // Bold
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  // Horizontal rules
+  html = html.replace(/^---$/gm, '<hr>');
+  // Split into paragraphs, don't double-wrap block elements
+  const blocks = html.split(/\n\n+/);
+  html = blocks.map(b => {
+    b = b.trim();
+    if (!b) return '';
+    if (/^<(h[1-6]|hr|div|ul|ol|li|table|blockquote)/.test(b)) return b;
+    b = b.replace(/\n/g, '<br>');
+    return '<p>' + b + '</p>';
+  }).join('\n');
+  return html;
 }
 
 function showInterpretation() {
@@ -2438,7 +2453,7 @@ function showInterpretation() {
     const div = document.createElement('div');
     div.className = 'result-card';
     div.innerHTML = `
-      <img src="${getCardFacePath(card)}" alt="${card.name}" style="width:180px;height:auto;border-radius:8px;margin-bottom:12px;box-shadow:0 0 20px rgba(232,213,163,0.42);">
+      <img src="${getCardFacePath(card)}" alt="${card.name}" style="width:144px;height:auto;border-radius:8px;margin-bottom:12px;box-shadow:0 0 20px rgba(232,213,163,0.42);">
       <div class="rc-name">${card.name}</div>
       <div class="rc-meaning">${card.meaning}</div>
     `;
@@ -2466,8 +2481,8 @@ function showInterpretation() {
   // === Vortex particle canvas animation (plays during AI call) ===
   const vortexCanvas = document.createElement('canvas');
   vortexCanvas.id = 'vortex-canvas';
-  vortexCanvas.style.cssText = 'position:fixed;inset:0;z-index:499;pointer-events:none;';
-  overlay.appendChild(vortexCanvas);
+  vortexCanvas.style.cssText = 'position:fixed;inset:0;z-index:1;pointer-events:none;';
+  document.body.appendChild(vortexCanvas);
   vortexCanvas.width = window.innerWidth;
   vortexCanvas.height = window.innerHeight;
   const vctx = vortexCanvas.getContext('2d');
@@ -2589,7 +2604,7 @@ ${cardDescs}
 格式：用"## 命轨解读"开头，**粗体**标每枚符名，"---"分隔后写"**命运箴言**："`;
 
   // Start AI call in parallel with vortex
-  const aiPromise = fetch('/hand-gesture/proxy.php', {
+  const aiPromise = fetch('proxy.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -2636,6 +2651,8 @@ ${cardDescs}
 }
 
 function closeInterpretation() {
+  const vc = document.getElementById('vortex-canvas');
+  if (vc) vc.remove();
   document.getElementById('result-overlay').classList.remove('show');
 }
 
