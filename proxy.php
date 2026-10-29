@@ -18,16 +18,16 @@ if (!$input || empty($input['messages'])) {
     exit;
 }
 
-$apiKey = getenv('MINIMAX_API_KEY') ?: '';
+$apiKey = getenv('DEEPSEEK_API_KEY') ?: '';
 
 $payload = json_encode([
-    'model' => 'MiniMax-M2.7',
+    'model' => 'deepseek-chat',
     'messages' => $input['messages'],
     'max_tokens' => isset($input['max_tokens']) ? $input['max_tokens'] : 1024,
     'temperature' => 0.9,
 ]);
 
-$ch = curl_init('https://api.minimax.chat/v1/chat/completions');
+$ch = curl_init('https://api.deepseek.com/chat/completions');
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_POST => true,
@@ -51,7 +51,7 @@ if ($httpCode !== 200) {
 
 $data = json_decode($response, true);
 if ($data && isset($data['choices'][0]['message']['content'])) {
-    // 去掉 MiniMax M2 模型的 <think>...</think> 推理标签
+    // 去掉 DeepSeek 模型的 <think>...</think> 推理标签
     $content = $data['choices'][0]['message']['content'];
     $content = preg_replace('/<think>.*?<\/think>\s*/s', '', $content);
     $data['choices'][0]['message']['content'] = trim($content);

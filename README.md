@@ -10,7 +10,7 @@ https://tuteng3.site/hand-gesture/gesture-demo.html
 
 - **实时手势识别** — 6 种手势（捏合选中、握拳清空、张开提交、悬停自动选、左右挥手翻页）
 - **36 张塔罗牌** — 22 张大阿尔卡纳 + 14 张小阿尔卡纳，古汉字×神秘学视觉风格
-- **AI 命理解读** — MiniMax M2.7 模型生成个性化占卜解读（约 6-10 秒）
+- **AI 命理解读** — DeepSeek 模型生成个性化占卜解读（约 6-10 秒）
 - **PC/移动端双支持** — 手势 + 键盘快捷键 + 鼠标 + 触摸
 - **调试面板** — 实时显示关键点坐标、手指状态、手势识别计数器
 - **卡牌洗牌/排序** — 一键随机打乱或按序排列
@@ -33,7 +33,7 @@ Layer 3: #cards-layer     — 卡片交互区
 | 手势识别 | MediaPipe HandLandmarker (`@mediapipe/tasks-vision@0.10.17`) |
 | 模型文件 | `hand_landmarker.task` (7.8MB, WASM) |
 | 前端 | 纯 HTML/CSS/JS (ES Module)，无框架依赖 |
-| AI 解读 | MiniMax M2.7 API，通过 PHP 代理调用 |
+| AI 解读 | DeepSeek API，通过 PHP 代理调用 |
 | 摄像头 | `navigator.mediaDevices.getUserMedia` |
 
 ## 手势识别
@@ -104,7 +104,7 @@ php -S localhost:8888
 # 访问 http://localhost:8888/gesture-demo.html
 ```
 
-> **注意**: 直接用 `file://` 协议打开会导致摄像头权限被拒绝。AI 解读功能依赖 `proxy.php`，需要 PHP 环境并设置 `MINIMAX_API_KEY` 环境变量。
+> **注意**: 直接用 `file://` 协议打开会导致摄像头权限被拒绝。AI 解读功能依赖 `proxy.php`，需要 PHP 环境并设置 `DEEPSEEK_API_KEY` 环境变量。
 
 ## 部署
 
@@ -154,7 +154,7 @@ location = /hand-gesture/proxy.php {
 在 PHP-FPM 池配置或 `.env` 中设置：
 
 ```ini
-MINIMAX_API_KEY=sk-your-minimax-key-here
+DEEPSEEK_API_KEY=sk-your-deepseek-key-here
 ```
 
 ### 验证部署
@@ -177,7 +177,7 @@ curl -s -X POST https://your-domain/hand-gesture/proxy.php \
 hand-gesture/
 ├── gesture-demo.html        # 主应用 (~64KB，单文件)
 ├── hand_landmarker.task     # MediaPipe 手部关键点模型 (7.8MB)
-├── proxy.php                # MiniMax AI API 代理
+├── proxy.php                # DeepSeek AI API 代理
 ├── assets/                  # 演示视频和背景音乐
 │   ├── card_reveal_pc.mp4
 │   ├── card_reveal_web.mp4
